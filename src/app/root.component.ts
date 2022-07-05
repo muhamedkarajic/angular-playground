@@ -15,5 +15,10 @@ export class RootComponent {
 
   constructor(private router: Router) {
     setInterval(() => { (this.object as Object).id = "RANDOM_NAME_X2" }, 1000)
+
+    setTimeout(() => {
+      this.myArray.pop();
+      this.myArray.push('another test');
+    }, 3000);
   }
 }

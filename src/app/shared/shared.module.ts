@@ -4,11 +4,13 @@ import { NgModule } from '@angular/core';
 
 import { MyCastPipe } from './pipes/my-cast.pipe';
 import { MyTypeofPipe } from './pipes/my-typeof.pipe';
+import { MyIfDirective } from './directives/my-if.directive';
 
 @NgModule({
   declarations: [
     MyCastPipe,
     MyTypeofPipe,
+    MyIfDirective,
   ],
   imports: [
     CommonModule,
@@ -17,6 +19,7 @@ import { MyTypeofPipe } from './pipes/my-typeof.pipe';
     CommonModule,
     MyCastPipe,
     MyTypeofPipe,
+    MyIfDirective,
   ]
 })
 export class SharedModule { }

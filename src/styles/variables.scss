@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap');
+
+$primary-color: #141414;
+$primary-color-hover: #1e2f57;
+$navbar-height: 75px;
+$soft-gray: #bbbbbb3d;
+$font-family: "Open Sans", sans-serif;
+$font-size: 16px;
+$spacing-horizontal: 20px;
+$spacing-vertical: 15px;
+$transition-time: 350ms;
+$background-color: white;
+$negativ-primary-color: #ffffff;
+
+$grid-breakpoints: (
+	xs: 0,
+	sm: 500px,
+	md: 800px,
+	lg: 1000px,
+	xl: 1024px,
+);
+$container-max-widths: (
+	sm: 500px,
+	md: 800px,
+	lg: 1000px,
+	xl: 1024px,
+);

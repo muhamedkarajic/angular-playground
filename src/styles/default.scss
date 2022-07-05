@@ -1,0 +1,67 @@
+@import "./variables.scss";
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: #ffffff00;
+  -webkit-focus-ring-color: #ffffff00;
+  outline: none;
+  &:focus {
+    outline: none;
+  }
+}
+
+html {
+  font-family: $font-family;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  max-width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  background-color: $background-color;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: $primary-color;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $primary-color-hover;
+}
+
+::-moz-selection {
+  color: white;
+  background: $primary-color;
+}
+
+::selection {
+  color: white;
+  background: $primary-color;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: $primary-color;
+  box-shadow: 0 0 0px 1000px white inset;
+  transition: background-color 5000s ease-in-out 0s;
+  font-family: $font-family;
+}
+

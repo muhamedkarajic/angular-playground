@@ -1,0 +1,11 @@
+@import "/src/styles/variables.scss";
+
+:host {
+    display: block;
+}
+
+button {
+    background-color: $primary-color;
+    color: $negativ-primary-color;
+    cursor: pointer;
+}

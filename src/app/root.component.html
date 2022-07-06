@@ -1,4 +1,13 @@
 <eager></eager>
-<div *myIf="myArray">Hello World.</div>
+<ng-container *ngIf="{
+    a: propertyA$ | async, 
+    b: propertyB$ | async
+} as props;">
+    <div *ngIf="props | myArePropsDefined">
+        {{ props.a }} {{ props.b }}
+    </div>
+</ng-container>
+<button [myCallout]="'Tooltip text which will be shown.'">Show tooltip? Hover.</button>
+
 <router-outlet></router-outlet>
 <footer>Footer</footer>

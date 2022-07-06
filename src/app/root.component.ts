@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import { Object } from './shared/models/object.model';
 
 
@@ -11,14 +11,14 @@ export class RootComponent {
   Object = Object;
   object = new Object() as any;
 
-  myArray = ['test', null];
+  readonly propertyA$ = new BehaviorSubject<string | null>('A');
+  readonly propertyB$ = new ReplaySubject<string | null>(1);
 
-  constructor(private router: Router) {
+  constructor() {
     setInterval(() => { (this.object as Object).id = "RANDOM_NAME_X2" }, 1000)
 
     setTimeout(() => {
-      this.myArray.pop();
-      this.myArray.push('another test');
+      this.propertyB$.next('B');
     }, 3000);
   }
 }

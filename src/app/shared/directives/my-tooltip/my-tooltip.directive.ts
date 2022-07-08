@@ -1,11 +1,8 @@
 import {
-    ChangeDetectorRef,
     Directive,
     ElementRef,
     Input,
-    NgZone,
     OnDestroy,
-    Optional,
     ViewContainerRef,
     ComponentRef,
 } from '@angular/core';

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { debounceTime, map, ReplaySubject, Subject, takeUntil, withLatestFrom, BehaviorSubject } from 'rxjs';
+import { take, debounceTime, map, ReplaySubject, Subject, takeUntil, withLatestFrom, BehaviorSubject, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'my-multi-selector',
@@ -17,7 +17,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     this.isInitialOnSelectedItemsChangeSkipped$.next(skipInitial);
   }
 
-  readonly selectedItems$ = new ReplaySubject<string[]>();
+  readonly selectedItems$ = new BehaviorSubject<string[]>([]);
 
   /**
    * Optional input property which represents currently selected items 
@@ -29,6 +29,8 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
   readonly data$ = new ReplaySubject<string[]>();
 
+  dataWithDetails$ = new ReplaySubject<{ value: string, selected: boolean }[]>();
+
   /*
    * The input data which represents the possible values which can be selected.
    */
@@ -39,7 +41,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   /**
    * Represents the filtered value based on the inputs {@link selectedItems} and {@link data}.
    */
-   readonly selectedItemsFiltered$ = new ReplaySubject<string[]>();
+  readonly selectedItemsFiltered$ = new ReplaySubject<string[]>();
 
   /**
    * Event which is outputed whenever the {@link selectedItemsFiltered$} get changed.
@@ -51,6 +53,22 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
    */
   onDestory$ = new Subject<void>();
 
+  /*
+   * If the current item is inside the selectedItems it will remove it and vice versa.
+   */
+  toggleItem(selectedItem: string) {
+    this.selectedItems$.pipe(
+      map(selectedItems => {
+        const isSelected = selectedItems.find(s => s === selectedItem) ? true : false;
+        if (isSelected)
+          return selectedItems.filter(s => s !== selectedItem);
+        return [...selectedItems, selectedItem];
+      }),
+      take(1),
+      takeUntil(this.onDestory$)
+    ).subscribe(selectedItems => this.selectedItems$.next(selectedItems));
+  }
+
   ngOnInit(): void {
     /**
      * Provides the functionality to set values using inputs.
@@ -59,11 +77,11 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
      */
     this.selectedItems$.pipe(
       withLatestFrom(this.data$),
-      takeUntil(this.onDestory$),
       map(([selectedItems, data]) => {
         const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
         return selectedItemsFiltered;
-      })
+      }),
+      takeUntil(this.onDestory$)
     ).subscribe(this.selectedItemsFiltered$);
 
     /* 
@@ -71,11 +89,11 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
      */
     this.data$.pipe(
       withLatestFrom(this.selectedItems$),
-      takeUntil(this.onDestory$),
       map(([data, selectedItems]) => {
         const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
         return selectedItemsFiltered;
-      })
+      }),
+      takeUntil(this.onDestory$)
     ).subscribe(this.selectedItemsFiltered$);
 
     /* 
@@ -89,6 +107,18 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     ).subscribe(([selectedItemsFiltered, skipInitial]) => {
       skipInitial ? this.isInitialOnSelectedItemsChangeSkipped$.next(false) : this.onSelectedItemsChange.next(selectedItemsFiltered);
     });
+
+    combineLatest([this.data$, this.selectedItemsFiltered$]).pipe(
+      map(([data, selectedItemsFiltered]) => {
+        return data.map(d => {
+          return {
+            value: d,
+            selected: selectedItemsFiltered.some(selectedItem => selectedItem === d)
+          }
+        })
+      }),
+      takeUntil(this.onDestory$)
+    ).subscribe(this.dataWithDetails$);
   }
 
   /*

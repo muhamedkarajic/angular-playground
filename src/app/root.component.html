@@ -1,4 +1,10 @@
-<eager></eager>
+
+<ng-container *ngIf="{myData: (myData$ | async)!, selectedItems: (selectedItems$ | async)!} as props">
+    <my-multi-selector [data]="props.myData" [selectedItems]="props.selectedItems" (selectedItemsChange)="onSelectedChange($event)"></my-multi-selector>
+</ng-container>
+
+
+<!-- <eager></eager>
 <ng-container *ngIf="{
     a: propertyA$ | async, 
     b: propertyB$ | async
@@ -9,5 +15,5 @@
 </ng-container>
 <button [myCallout]="'Tooltip text which will be shown.'">Show tooltip? Hover.</button>
 
+<footer>Footer</footer> -->
 <router-outlet></router-outlet>
-<footer>Footer</footer>

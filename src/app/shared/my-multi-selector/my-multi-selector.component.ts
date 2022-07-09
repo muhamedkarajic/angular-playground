@@ -8,7 +8,7 @@ import { debounceTime, map, ReplaySubject, Subject, takeUntil, withLatestFrom, B
 })
 export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
-  isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
+  readonly isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Optional input which will determine if the initial {@link onSelectedItemsChange} triggers.
@@ -17,7 +17,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     this.isInitialOnSelectedItemsChangeSkipped$.next(skipInitial);
   }
 
-  selectedItems$ = new ReplaySubject<string[]>();
+  readonly selectedItems$ = new ReplaySubject<string[]>();
 
   /**
    * Optional input property which represents currently selected items 
@@ -27,7 +27,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     this.selectedItems$.next(selectedItems);
   }
 
-  data$ = new ReplaySubject<string[]>();
+  readonly data$ = new ReplaySubject<string[]>();
 
   /*
    * The input data which represents the possible values which can be selected.
@@ -39,7 +39,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   /**
    * Represents the filtered value based on the inputs {@link selectedItems} and {@link data}.
    */
-  selectedItemsFiltered$ = new ReplaySubject<string[]>();
+   readonly selectedItemsFiltered$ = new ReplaySubject<string[]>();
 
   /**
    * Event which is outputed whenever the {@link selectedItemsFiltered$} get changed.

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import { Object } from './shared/models/object.model';
-
+import { MyMultiSelectorComponent } from './shared/my-multi-selector/my-multi-selector.component';
 
 @Component({
   selector: 'my-root',
@@ -22,9 +22,9 @@ export class RootComponent {
   readonly x$ = new BehaviorSubject<string | null>(null);
 
   constructor() {
+    const x = new MyMultiSelectorComponent();
+
     setInterval(() => { (this.object as Object).id = "RANDOM_NAME_X2" }, 1000)
-
-
     
     setTimeout(() => {
       this.propertyB$.next('B');

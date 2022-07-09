@@ -3,8 +3,8 @@
 </ng-container>
 <ng-container *ngIf="{ myData$, selectedItems$ } | myCombineLatest | async as props">
   <my-multi-selector
-    [data]="props.myData$.value"
     [selectedItems]="props.selectedItems$.value"
+    [data]="props.myData$.value"
     (selectedItemsChange)="onSelectedChange($event)"
   ></my-multi-selector>
 </ng-container>

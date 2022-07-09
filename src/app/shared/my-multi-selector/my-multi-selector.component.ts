@@ -1,48 +1,92 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
-import { map, of, ReplaySubject, Subject, take, takeUntil, withLatestFrom } from 'rxjs';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { debounceTime, map, skip, ReplaySubject, Subject, takeUntil, withLatestFrom } from 'rxjs';
+
+export interface IWidget {
+  /**
+   * Draws the widget on the display surface.
+   * @param x - the X position of the widget
+   * @param y - the Y position of the widget
+   */
+  draw(x: number, y: number): void;
+}
 
 @Component({
   selector: 'my-multi-selector',
   templateUrl: './my-multi-selector.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MyMultiSelectorComponent implements OnDestroy {
-  data$ = new ReplaySubject<string[]>();
-  selectedItems$ = new ReplaySubject<string[]>();
-  onDestory$ = new Subject<void>();
+export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
+  selectedItems$ = new ReplaySubject<string[]>();
+  
+  /**
+   * Optional input property which represents currently selected items 
+   * which are possible to be selected based on {@link data$}.
+   */
+  @Input() set selectedItems(selectedItems: string[]) {
+    this.selectedItems$.next(selectedItems);
+  }
+
+  data$ = new ReplaySubject<string[]>();
+
+  /*
+   * The input data which represents the possible values which can be selected.
+   */
   @Input() set data(data: string[]) {
     this.data$.next(data);
-
-    of(undefined).pipe( // If I subscribe to data$ then it ends up with a additional subscription. 
-      withLatestFrom(this.selectedItems$),
-      map(([_, selectedItems]) => {
-        return selectedItems;
-      }),
-      take(1),
-      takeUntil(this.onDestory$)
-    ).subscribe(selectedItems => this.selectedItems = selectedItems);
   }
 
-  @Input() set selectedItems(selectedItems: string[]) {
-    // Triggers the setting of the selectedItems$ but will filter it based on data$.
-    of(undefined).pipe( // Don't know why but directly calling this.data$.subscribe results in wrong data.
-      withLatestFrom(this.data$),
-      map(([_, data]) => data),
-      take(1),
-      takeUntil(this.onDestory$)
-    ).subscribe(data => {
-      const filteredSelectedItems = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
-      this.selectedItems$.next(filteredSelectedItems);
-    });
-  }
+  /**
+   * Represents the filtered value based on the inputs {@link selectedItems} and {@link data}.
+   */
+  selectedItemsFiltered$ = new ReplaySubject<string[]>();
 
+  /**
+   * Event which is outputed whenever the {@link selectedItemsFiltered$} get changed.
+   */
   @Output() selectedItemsChange = new EventEmitter<string[]>();
 
-  constructor() {
-    this.selectedItems$.subscribe(this.selectedItemsChange);
+  /*
+   * The destory life cicle subject which will be completed if the component gets destoryed.
+   */
+  onDestory$ = new Subject<void>();
 
+  ngOnInit(): void {
+    /**
+     * Provides the functionality to set values using inputs.
+     * Will take data$ and based on it filter values which can't be set 
+     * and that will be shown as the {@link selectedItemsFiltered$}.
+     */
+    this.selectedItems$.pipe(
+      withLatestFrom(this.data$),
+      takeUntil(this.onDestory$),
+      map(([selectedItems, data]) => {
+        const filteredSelectedItems = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
+        return filteredSelectedItems;
+      })
+    ).subscribe(this.selectedItemsFiltered$);
 
+    /* 
+     * Whenever data$ is set we check current selectedItemsFiltered to ensure they still exist.
+     */
+    this.data$.pipe(
+      withLatestFrom(this.selectedItemsFiltered$),
+      takeUntil(this.onDestory$),
+      map(([data, selectedItemsFiltered]) => {
+        const filteredSelectedItems = selectedItemsFiltered.filter(selectedItemFiltered => data.some(d => d === selectedItemFiltered));
+        return filteredSelectedItems;
+      })
+    ).subscribe(this.selectedItemsFiltered$);
+
+    /* 
+     * Emits the selectedItems but only those that are also inside data$. Will skipped the initial emit on render.
+     * Will be debounced so if selectedItems$ and data$ is set at the same time it dosen't emit same values twice.
+     */
+    this.selectedItemsFiltered$.pipe(
+      skip(1),
+      debounceTime(0),
+      takeUntil(this.onDestory$)
+    ).subscribe(this.selectedItemsChange);
   }
 
   ngOnDestroy(): void {

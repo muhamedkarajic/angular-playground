@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { debounceTime, map, skip, ReplaySubject, Subject, takeUntil, withLatestFrom } from 'rxjs';
+import { debounceTime, map, ReplaySubject, Subject, takeUntil, withLatestFrom, BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'my-multi-selector',
@@ -8,8 +8,17 @@ import { debounceTime, map, skip, ReplaySubject, Subject, takeUntil, withLatestF
 })
 export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
+  isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
+
+  /**
+   * Optional input which will determine if the initial {@link onSelectedItemsChange} triggers.
+   */
+  @Input() set isInitialOnSelectedItemsChangeSkipped(skipInitial: boolean) {
+    this.isInitialOnSelectedItemsChangeSkipped$.next(skipInitial);
+  }
+
   selectedItems$ = new ReplaySubject<string[]>();
-  
+
   /**
    * Optional input property which represents currently selected items 
    * which are possible to be selected based on {@link data$}.
@@ -35,7 +44,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   /**
    * Event which is outputed whenever the {@link selectedItemsFiltered$} get changed.
    */
-  @Output() selectedItemsChange = new EventEmitter<string[]>();
+  @Output() onSelectedItemsChange = new EventEmitter<string[]>();
 
   /*
    * The destory life cicle subject which will be completed if the component gets destoryed.
@@ -52,8 +61,8 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
       withLatestFrom(this.data$),
       takeUntil(this.onDestory$),
       map(([selectedItems, data]) => {
-        const filteredSelectedItems = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
-        return filteredSelectedItems;
+        const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
+        return selectedItemsFiltered;
       })
     ).subscribe(this.selectedItemsFiltered$);
 
@@ -64,8 +73,8 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
       withLatestFrom(this.selectedItems$),
       takeUntil(this.onDestory$),
       map(([data, selectedItems]) => {
-        const filteredSelectedItems = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
-        return filteredSelectedItems;
+        const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
+        return selectedItemsFiltered;
       })
     ).subscribe(this.selectedItemsFiltered$);
 
@@ -74,10 +83,12 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
      * Will be debounced so if selectedItems$ and data$ is set at the same time it dosen't emit same values twice.
      */
     this.selectedItemsFiltered$.pipe(
-      skip(1),
+      withLatestFrom(this.isInitialOnSelectedItemsChangeSkipped$),
       debounceTime(0),
-      takeUntil(this.onDestory$)
-    ).subscribe(this.selectedItemsChange);
+      takeUntil(this.onDestory$),
+    ).subscribe(([selectedItemsFiltered, skipInitial]) => {
+      skipInitial ? this.isInitialOnSelectedItemsChangeSkipped$.next(false) : this.onSelectedItemsChange.next(selectedItemsFiltered);
+    });
   }
 
   /*

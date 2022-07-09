@@ -6,14 +6,16 @@ import { MyMultiSelectorComponent } from './my-multi-selector/my-multi-selector.
 
 
 import { MyCastPipe } from './pipes/my-cast.pipe';
-import { MyDefinedPropsPipe } from './pipes/my-defined-props.pipe';
+import { MyCombineLatestPipe } from './pipes/my-combineLatest.pipe';
+import { MyArePropsDefinedPipe } from './pipes/my-defined-props.pipe';
 import { MyTypeofPipe } from './pipes/my-typeof.pipe';
 
 @NgModule({
   declarations: [
     MyCastPipe,
     MyTypeofPipe,
-    MyDefinedPropsPipe,
+    MyCombineLatestPipe,
+    MyArePropsDefinedPipe,
     CalloutComponent,
     MyMultiSelectorComponent,
     CalloutDirective,
@@ -25,7 +27,8 @@ import { MyTypeofPipe } from './pipes/my-typeof.pipe';
     CommonModule,
     MyCastPipe,
     MyTypeofPipe,
-    MyDefinedPropsPipe,
+    MyCombineLatestPipe,
+    MyArePropsDefinedPipe,
     CalloutComponent,
     MyMultiSelectorComponent,
     CalloutDirective,

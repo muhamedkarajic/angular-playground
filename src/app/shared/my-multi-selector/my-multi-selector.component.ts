@@ -41,6 +41,8 @@ export class MyMultiSelectorComponent implements OnDestroy {
 
   constructor() {
     this.selectedItems$.subscribe(this.selectedItemsChange);
+
+
   }
 
   ngOnDestroy(): void {

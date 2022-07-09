@@ -3,7 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'myArePropsDefined'
 })
-export class MyDefinedPropsPipe implements PipeTransform {
+export class MyArePropsDefinedPipe implements PipeTransform {
   transform(value: unknown, allowedTypes: unknown[] = [0]): boolean {
     if (typeof value === 'object') {
       const obj = value as Record<string, unknown>;

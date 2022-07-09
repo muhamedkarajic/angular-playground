@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import { Object } from './shared/models/object.model';
 
 
@@ -19,13 +19,17 @@ export class RootComponent {
   }
   readonly propertyA$ = new BehaviorSubject<string | null>('A');
   readonly propertyB$ = new ReplaySubject<string | null>(1);
+  readonly x$ = new BehaviorSubject<string | null>(null);
 
   constructor() {
     setInterval(() => { (this.object as Object).id = "RANDOM_NAME_X2" }, 1000)
 
+
+    
     setTimeout(() => {
       this.propertyB$.next('B');
       this.selectedItems$.next(['data1', 'data3'])
+      this.x$.next('test');
     }, 3000);
 
     setTimeout(() => {

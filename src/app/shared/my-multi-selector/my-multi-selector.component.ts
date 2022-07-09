@@ -58,13 +58,13 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     ).subscribe(this.selectedItemsFiltered$);
 
     /* 
-     * Whenever data$ is set we check current selectedItemsFiltered to ensure they still exist.
+     * Whenever data$ is set we check selectedItems$ to ensure proper are set which exist.
      */
     this.data$.pipe(
-      withLatestFrom(this.selectedItemsFiltered$),
+      withLatestFrom(this.selectedItems$),
       takeUntil(this.onDestory$),
-      map(([data, selectedItemsFiltered]) => {
-        const filteredSelectedItems = selectedItemsFiltered.filter(selectedItemFiltered => data.some(d => d === selectedItemFiltered));
+      map(([data, selectedItems]) => {
+        const filteredSelectedItems = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
         return filteredSelectedItems;
       })
     ).subscribe(this.selectedItemsFiltered$);
@@ -80,6 +80,9 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     ).subscribe(this.selectedItemsChange);
   }
 
+  /*
+   * Manages the destoryment of all subscriptions.
+   */
   ngOnDestroy(): void {
     this.onDestory$.complete();
   }

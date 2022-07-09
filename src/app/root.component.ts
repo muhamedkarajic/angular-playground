@@ -22,8 +22,6 @@ export class RootComponent {
   readonly x$ = new BehaviorSubject<string | null>(null);
 
   constructor() {
-    const x = new MyMultiSelectorComponent();
-
     setInterval(() => { (this.object as Object).id = "RANDOM_NAME_X2" }, 1000)
     
     setTimeout(() => {

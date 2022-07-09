@@ -1,15 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { debounceTime, map, skip, ReplaySubject, Subject, takeUntil, withLatestFrom } from 'rxjs';
 
-export interface IWidget {
-  /**
-   * Draws the widget on the display surface.
-   * @param x - the X position of the widget
-   * @param y - the Y position of the widget
-   */
-  draw(x: number, y: number): void;
-}
-
 @Component({
   selector: 'my-multi-selector',
   templateUrl: './my-multi-selector.component.html',

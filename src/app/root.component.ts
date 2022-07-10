@@ -23,24 +23,24 @@ export class RootComponent {
   constructor() {
     setInterval(() => { (this.object as Object).id = "RANDOM_NAME_X2" }, 1000)
     
-    // setTimeout(() => {
-    //   this.propertyB$.next('B');
-    //   this.selectedItems$.next(['data1', 'data3'])
-    //   this.x$.next('test');
-    // }, 3000);
+    setTimeout(() => {
+      this.propertyB$.next('B');
+      this.selectedItems$.next(['data1', 'data3'])
+      this.x$.next('test');
+    }, 3000);
 
-    // setTimeout(() => {
-    //   this.propertyB$.next('B');
-    //   this.myData$.next(['data1', 'data2'])
-    // }, 6000);
+    setTimeout(() => {
+      this.propertyB$.next('B');
+      this.myData$.next(['data1', 'data2'])
+    }, 6000);
 
-    // setTimeout(() => {
-    //   this.selectedItems$.next(['data3'])
-    // }, 7000);
+    setTimeout(() => {
+      this.selectedItems$.next(['data3'])
+    }, 7000);
 
-    // setTimeout(() => {
-    //   this.myData$.next(['data1', 'data2', 'data3'])
-    //   this.selectedItems$.next(['data1', 'data2', 'data3'])
-    // }, 9000);
+    setTimeout(() => {
+      this.myData$.next(['data1', 'data2', 'data3'])
+      this.selectedItems$.next(['data1', 'data2', 'data3'])
+    }, 9000);
   }
 }

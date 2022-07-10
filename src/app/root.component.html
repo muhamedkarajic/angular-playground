@@ -1,7 +1,3 @@
-<ng-container *ngIf="{ x$, selectedItems$ } | myCombineLatest | async as props">
-    Rendered: {{props.x$.value}}
-</ng-container>
-
 <ng-container *ngIf="{ myData$, selectedItems$ } | myCombineLatest | async as props">
   <my-multi-selector
     [selectedItems]="props.selectedItems$.value"
@@ -9,6 +5,10 @@
     (onSelectedItemsChange)="onSelectedChange($event)"
     [isInitialOnSelectedItemsChangeSkipped]="false"
   ></my-multi-selector>
+</ng-container>
+
+<ng-container *ngIf="{ x$, selectedItems$ } | myCombineLatest: false | async as props">
+  Rendered: {{props.x$.value}}
 </ng-container>
 
 <!-- <eager></eager>

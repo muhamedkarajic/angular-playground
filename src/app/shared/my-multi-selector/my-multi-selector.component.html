@@ -1,12 +1,10 @@
-<ul>All Items:</ul>
-<li *ngFor="let item of data$ | async" (click)="toggleItem(item)">{{ item }}</li>
-<br/>
--------------------------------------
-<br/>
-<ul>Selected Items:</ul>
-<li *ngFor="let selectedItem of selectedItemsFiltered$ | async" (click)="toggleItem(selectedItem)">{{ selectedItem }}</li>
-<br/>
--------------------------------------
-<br/>
 <ul>Nice View:</ul>
-<li *ngFor="let itemWithDetails of dataWithDetails$ | async">{{ itemWithDetails.value }} {{ itemWithDetails.selected }}</li>
+<li class="item" *ngFor="let itemWithDetails of dataWithDetails$ | async" (click)="toggleItem(itemWithDetails.value)">
+    {{ itemWithDetails.value }} | {{ itemWithDetails.selected }}</li>
+<div>-------------------------------------</div>
+<ul>All Items:</ul>
+<li *ngFor="let item of data$ | async">{{ item }}</li>
+<div>-------------------------------------</div>
+<ul>Selected Items:</ul>
+<li *ngFor="let selectedItem of selectedItemsFiltered$ | async">{{ selectedItem }}
+</li>

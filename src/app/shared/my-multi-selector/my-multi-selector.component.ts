@@ -4,10 +4,11 @@ import { take, debounceTime, map, ReplaySubject, Subject, takeUntil, withLatestF
 @Component({
   selector: 'my-multi-selector',
   templateUrl: './my-multi-selector.component.html',
+  styleUrls: ['my-multi-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyMultiSelectorComponent implements OnInit, OnDestroy {
-
+  readonly string = String;
   readonly isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
 
   /**
@@ -29,7 +30,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
   readonly data$ = new ReplaySubject<string[]>();
 
-  dataWithDetails$ = new ReplaySubject<{ value: string, selected: boolean }[]>();
+  readonly dataWithDetails$ = new ReplaySubject<{ value: string, selected: boolean }[]>();
 
   /*
    * The input data which represents the possible values which can be selected.
@@ -51,7 +52,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   /*
    * The destory life cicle subject which will be completed if the component gets destoryed.
    */
-  onDestory$ = new Subject<void>();
+  protected readonly onDestory$ = new Subject<void>();
 
   /*
    * If the current item is inside the selectedItems it will remove it and vice versa.

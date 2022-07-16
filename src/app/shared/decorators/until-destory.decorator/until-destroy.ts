@@ -3,7 +3,7 @@ import {
   ɵComponentType as ComponentType,
   ɵDirectiveType as DirectiveType,
 } from '@angular/core';
-import { catchError, Observable, Subscription, throwError, timeout, take } from 'rxjs';
+import { catchError, Observable, Subscription, throwError, timeout, take, combineLatest, of } from 'rxjs';
 
 import { PipeType, isPipe } from './ivy';
 import {
@@ -12,6 +12,7 @@ import {
   completeSubjectOnTheInstance,
   markAsDecorated,
 } from './internals';
+import { IRequiredConfig } from '../required.decorator';
 
 function unsubscribe(property: unknown): void {
   if (property instanceof Subscription) {
@@ -53,67 +54,41 @@ function decorateNgOnDestroy(
   };
 }
 
-function getComponentMeta(compType: any): { inputs: any[], outputs: any[] } {
-  const props = compType.__prop__metadata__;
-  const inputs = [];
-  const outputs = [];
-  for (const prop in props) {
-    const member = props[prop][0];
-    if (member.ngMetadataName === 'Input') {
-      inputs.push(prop);
-    } else if (member.ngMetadataName === 'Output') {
-      outputs.push(prop);
-    }
-  }
-  return {
-    inputs: inputs.sort(),
-    outputs: outputs.sort()
-  };
-}
-
 function decorateNgOnInit(
   ngOnInit: (() => void) | null | undefined,
-  options: UntilDestroyOptions
 ) {
   return function (this: any) {
-
-
-    // Invoke the original `ngOnInit` if it exists
     ngOnInit && ngOnInit.call(this);
 
     const props = Object.values(this.constructor.ɵcmp.inputs) as string[];
 
     props.forEach(prop => {
       const obs$ = this[`${prop}$`] as Observable<unknown>;
+      
 
-      obs$.pipe(
+      combineLatest([of(this), obs$]).pipe(
         timeout(0),
         catchError(() => throwError(() => new Error(`${this.constructor.name}: ${prop} required as input.`))),
         take(1)
-      ).subscribe(value => {
+      ).subscribe(([self, value]) => {
+
+        const prototype_ = Object.getPrototypeOf(self);
+          const mergedConfigGetter = Object.getOwnPropertyDescriptor(prototype_, `__${prop}__config`)?.get;
+
+          if(!mergedConfigGetter)
+            return;
+
+          const mergedConfig: IRequiredConfig = mergedConfigGetter();
+          if (mergedConfig.disallowedValues && mergedConfig.disallowedValues.some(v => v === value))
+              throw new Error(`${self.constructor.name}: Property ${prop} can't be ${value}.`);
+          if (mergedConfig.allowedValues && mergedConfig.allowedValues.some(x => x === value))
+              return;
+          if (mergedConfig.allowedValues && mergedConfig.allowedValues.some(x => x === value))
+              return;
+          if (value === undefined || value === null || (mergedConfig.allowedValues && value === NaN))
+              throw new Error(`${self.constructor.name}: Property ${prop} can't be ${value}.`);
       });
     });
-
-
-    // It's important to use `this` instead of caching instance
-    // that may lead to memory leaks
-    completeSubjectOnTheInstance(this, getSymbol());
-
-    // Check if subscriptions are pushed to some array
-    if (options.arrayName) {
-      unsubscribeIfPropertyIsArrayLike(this[options.arrayName]);
-    }
-
-    // Loop through the properties and find subscriptions
-    if (options.checkProperties) {
-      for (const property in this) {
-        if (options.blackList?.includes(property)) {
-          continue;
-        }
-
-        unsubscribe(this[property]);
-      }
-    }
   };
 }
 
@@ -126,9 +101,8 @@ function decorateProviderDirectiveOrComponent<T>(
 
 function decorateProviderDirectiveOrComponentWithOnInit<T>(
   type: InjectableType<T> | DirectiveType<T> | ComponentType<T>,
-  options: UntilDestroyOptions
 ): void {
-  type.prototype.ngOnInit = decorateNgOnInit(type.prototype.ngOnInit, options);
+  type.prototype.ngOnInit = decorateNgOnInit(type.prototype.ngOnInit);
 }
 
 function decoratePipe<T>(type: PipeType<T>, options: UntilDestroyOptions): void {
@@ -138,12 +112,12 @@ function decoratePipe<T>(type: PipeType<T>, options: UntilDestroyOptions): void 
 
 const nameof = <T>(name: keyof T) => name;
 
-export function RequiredInputs<T>(config: Partial<{[P in keyof T]: boolean}>): ClassDecorator {
+export function RequiredInputs<T>(config?: Partial<{[P in keyof T]: boolean}>): ClassDecorator {
   return (type: any) => {
     if (isPipe(type)) {
-      decoratePipe(type, config);
+      decoratePipe(type, config!);
     } else {
-      decorateProviderDirectiveOrComponentWithOnInit(type, config);
+      decorateProviderDirectiveOrComponentWithOnInit(type);
     }
 
     markAsDecorated(type);

@@ -1,7 +1,7 @@
 <ng-container *ngIf="{ myData$, selectedItems$ } | myCombineLatest | async as props">
   <my-multi-selector
     [selectedItems]="props.selectedItems$.value"
-    [data]="props.myData$.value"
+    [data]="undefined"
     (onSelectedItemsChange)="onSelectedChange($event)"
     [isInitialOnSelectedItemsChangeSkipped]="true"
   ></my-multi-selector>
@@ -11,8 +11,8 @@
   Rendered: {{props.x$.value}}
 </ng-container>
 
-<!-- <eager></eager>
-<ng-container *ngIf="{
+<eager></eager>
+<!-- <ng-container *ngIf="{
     a: propertyA$ | async, 
     b: propertyB$ | async
 } as props;">
@@ -24,6 +24,5 @@
 
 <footer>Footer</footer> -->
 
-<button [routerLink]="'lazy-module'"></button>
 
 <router-outlet></router-outlet>

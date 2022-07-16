@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
 import { take, map, ReplaySubject, Subject, takeUntil, BehaviorSubject, withLatestFrom, combineLatest, debounceTime } from 'rxjs';
-import { Required } from '../decorators/required.decorator';
+import { Required_ } from '../decorators/required.decorator';
 import { RequiredInputs } from '../decorators/until-destory.decorator/until-destroy';
 
-@RequiredInputs<MyMultiSelectorComponent>({})
+
+@RequiredInputs()
 @Component({
   selector: 'my-multi-selector',
   templateUrl: './my-multi-selector.component.html',
@@ -37,7 +38,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   /*
    * The input data which represents the possible values which can be selected.
    */
-  @Input() @Required() set data(data: string[] | undefined) {
+  @Input() @Required_() set data(data: string[] | undefined) {
     this.data$.next(data);
   }
 
@@ -71,9 +72,11 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestory$)
     ).subscribe(selectedItems => this.selectedItems$.next(selectedItems));
   }
+  
+  constructor(private readonly zone: NgZone) {
 
+  }
   ngOnInit(): void {
-    this.data$.next(undefined);
     
     
     /**

@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BehaviorSubject, of, ReplaySubject, take } from 'rxjs';
 import { Object } from './shared/models/object.model';
 
+declare var global: any;
+
 @Component({
   selector: 'my-root',
   templateUrl: './root.component.html',
@@ -32,6 +34,12 @@ export class RootComponent {
     ).subscribe(() => {
       console.log('index is: ', index);
     });
+
+    setTimeout(() => {
+      const document = global.document as Document;
+      const div = document.getElementById("myDiv");
+      div!.innerHTML="<div></br>Hello World</br></br></div>"
+    }, 1000);
 
 
     // setInterval(() => { (this.object as Object).id = "RANDOM_NAME_X2" }, 1000)

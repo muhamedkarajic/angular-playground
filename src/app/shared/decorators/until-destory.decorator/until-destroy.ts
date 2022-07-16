@@ -3,7 +3,7 @@ import {
   ɵComponentType as ComponentType,
   ɵDirectiveType as DirectiveType,
 } from '@angular/core';
-import { catchError, Observable, Subscription, throwError, timeout, take, combineLatest, of } from 'rxjs';
+import { catchError, Observable, Subscription, throwError, timeout, take, combineLatest, of, ReplaySubject } from 'rxjs';
 
 import { PipeType, isPipe } from './ivy';
 import {
@@ -63,31 +63,34 @@ function decorateNgOnInit(
     const props = Object.values(this.constructor.ɵcmp.inputs) as string[];
 
     props.forEach(prop => {
-      const obs$ = this[`${prop}$`] as Observable<unknown>;
+      const obs$ = this[`${prop}$`] as Observable<unknown> | undefined;
       
+      if(!obs$)
+        throw new Error(`${this.constructor.name}: Property ${prop} missing corresponding ReplaySubject called: ${prop}$.`);
 
-      combineLatest([of(this), obs$]).pipe(
-        timeout(0),
-        catchError(() => throwError(() => new Error(`${this.constructor.name}: ${prop} required as input.`))),
-        take(1)
-      ).subscribe(([self, value]) => {
+      if(obs$ instanceof ReplaySubject)
+        combineLatest([of(this), obs$]).pipe(
+          timeout(0),
+          catchError(() => throwError(() => new Error(`${this.constructor.name}: ${prop} required as input.`))),
+          take(1)
+        ).subscribe(([self, value]) => {
 
-        const prototype_ = Object.getPrototypeOf(self);
-          const mergedConfigGetter = Object.getOwnPropertyDescriptor(prototype_, `__${prop}__config`)?.get;
+          const prototype_ = Object.getPrototypeOf(self);
+            const mergedConfigGetter = Object.getOwnPropertyDescriptor(prototype_, `__${prop}__config`)?.get;
 
-          if(!mergedConfigGetter)
-            return;
-
-          const mergedConfig: IRequiredConfig = mergedConfigGetter();
-          if (mergedConfig.disallowedValues && mergedConfig.disallowedValues.some(v => v === value))
-              throw new Error(`${self.constructor.name}: Property ${prop} can't be ${value}.`);
-          if (mergedConfig.allowedValues && mergedConfig.allowedValues.some(x => x === value))
+            if(!mergedConfigGetter)
               return;
-          if (mergedConfig.allowedValues && mergedConfig.allowedValues.some(x => x === value))
-              return;
-          if (value === undefined || value === null || (mergedConfig.allowedValues && value === NaN))
-              throw new Error(`${self.constructor.name}: Property ${prop} can't be ${value}.`);
-      });
+
+            const mergedConfig: IRequiredConfig = mergedConfigGetter();
+            if (mergedConfig.disallowedValues && mergedConfig.disallowedValues.some(v => v === value))
+                throw new Error(`${self.constructor.name}: Property ${prop} can't be ${value}.`);
+            if (mergedConfig.allowedValues && mergedConfig.allowedValues.some(x => x === value))
+                return;
+            if (mergedConfig.allowedValues && mergedConfig.allowedValues.some(x => x === value))
+                return;
+            if (value === undefined || value === null || (mergedConfig.allowedValues && value === NaN))
+                throw new Error(`${self.constructor.name}: Property ${prop} can't be ${value}.`);
+        });
     });
   };
 }

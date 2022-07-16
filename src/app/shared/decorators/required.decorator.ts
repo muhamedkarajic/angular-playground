@@ -15,6 +15,35 @@ const defaultRequiredConfig: IRequiredConfig = {
     timeoutMilliseconds: 100
 }
 
+
+export const Required_ = (config?: Partial<IRequiredConfig>) =>
+    (target: any, key: string, descriptor: PropertyDescriptor) => {
+        let _value: any;
+
+        const mergedConfig = config ? {...defaultRequiredConfig, ...config} : defaultRequiredConfig;
+
+        const old_setter = descriptor.set!;
+        
+        descriptor.set = function(value: any) {
+            if (mergedConfig.disallowedValues && mergedConfig.disallowedValues.some(v => v === value))
+                throw new Error(`${target.constructor.name}: Property ${key} can't be ${value}.`);
+            if (mergedConfig.allowedValues && mergedConfig.allowedValues.some(x => x === value))
+                return;
+            if (mergedConfig.allowedValues && mergedConfig.allowedValues.some(x => x === value))
+                return;
+            if (value === undefined || value === null || (mergedConfig.allowedValues && value === NaN))
+                throw new Error(`${target.constructor.name}: Property ${key} can't be ${value}.`);
+            const self = this as any;
+            const old_setter_ = Object.getOwnPropertyDescriptor(this, `__${key}__`);
+            old_setter_!.set!(value);
+        }
+
+        Object.defineProperty(target, `__${key}__`, {
+            configurable: true,
+            set: old_setter
+        });
+    }
+
 export const Required = (config?: Partial<IRequiredConfig>) =>
     (target: any, key: string) => {
         let subject$: ReplaySubject<any>;

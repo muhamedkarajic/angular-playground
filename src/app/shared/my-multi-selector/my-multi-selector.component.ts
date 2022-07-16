@@ -22,7 +22,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
   readonly selectedItems$ = new BehaviorSubject<string[]>([]);
 
-  @Required({disallowedValues:[],allowedValues: [undefined]}) readonly data$ = new ReplaySubject<string[] | undefined>();
+  readonly data$ = new ReplaySubject<string[] | undefined>();
 
   /**
    * Optional input property which represents currently selected items 
@@ -37,7 +37,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   /*
    * The input data which represents the possible values which can be selected.
    */
-  @Input() set data(data: string[] | undefined) {
+  @Input() @Required() set data(data: string[] | undefined) {
     this.data$.next(data);
   }
 
@@ -73,6 +73,9 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.data$.next(undefined);
+    
+    
     /**
      * Provides the functionality to set values using inputs.
      * Will take data$ and based on it filter values which can't be set 

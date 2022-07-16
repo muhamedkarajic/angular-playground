@@ -1,0 +1,23 @@
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppComponent } from './app.component';
+import { WindowResizeDirective } from './windowresize.directive';
+
+@NgModule({
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        FormsModule,
+    ],
+    declarations: [
+        AppComponent,
+        WindowResizeDirective,
+    ],
+    providers: [
+      
+    ],
+    bootstrap: [AppComponent]
+})
+export class AppModule { }

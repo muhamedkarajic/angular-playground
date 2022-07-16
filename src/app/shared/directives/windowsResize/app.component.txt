@@ -1,0 +1,63 @@
+//our root app component
+import { Component, NgModule, VERSION} from '@angular/core'
+import { BrowserModule} from '@angular/platform-browser'
+
+@Component({
+  selector: 'my-app',
+  template: `
+    <div class="gui" [appWindowResize]="windowSizeBreakpoints" (windowWidthChanged)="setIsCompact($event)">
+        <div class="left-panel">
+            <h2 *ngIf="sizeOption >= 2">Left panel</h2>
+            <h2 *ngIf="sizeOption < 2">LP</h2>
+        </div>
+        <div class="main-area">
+            <h2>Main area</h2>
+            <p>Resize this window by toggling side panels in the viewer.</p>
+            <p>The breakpoints are 300px and 500px.</p>
+        </div>
+        <div class="right-panel" *ngIf="sizeOption >= 1"><h2>Right panel</h2></div>
+    </div>
+  `,
+  styles: [`
+    :host {
+        display: block;
+        height: 100%;
+    }
+    .gui {
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+    .left-panel {
+        max-width: 200px;
+        flex-basis: 200px;
+        border-right: solid 2px #444;
+        padding: 0 1em;
+    }
+    .right-panel {
+        max-width: 200px;
+        flex-basis: 100px;
+        border-left: solid 2px #444;
+        padding: 0 1em;
+    }
+    .main-area {
+        flex-basis: 100%;
+        padding: 0 1em;
+    }
+  `]
+})
+export class AppComponent {
+  public isReadOnly: boolean = false;
+  public windowSizeBreakpoints = [300, 500];
+  /**
+   * The size options will be:
+   * 0: <300
+   * 1: 300-500
+   * 2: 500+
+   **/
+  public sizeOption: number = 2;
+  
+  public setIsCompact(widthIdx) {
+      this.sizeOption = widthIdx;
+  }
+}

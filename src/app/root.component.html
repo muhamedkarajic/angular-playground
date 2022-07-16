@@ -1,9 +1,9 @@
 <ng-container *ngIf="{ myData$, selectedItems$ } | myCombineLatest | async as props">
   <my-multi-selector
     [selectedItems]="props.selectedItems$.value"
-    [data]="props.myData$.value"
+    [data]="undefined"
     (onSelectedItemsChange)="onSelectedChange($event)"
-    [isInitialOnSelectedItemsChangeSkipped]="false"
+    [isInitialOnSelectedItemsChangeSkipped]="true"
   ></my-multi-selector>
 </ng-container>
 
@@ -23,4 +23,7 @@
 <button [myCallout]="'Tooltip text which will be shown.'">Show tooltip? Hover.</button>
 
 <footer>Footer</footer> -->
+
+<button [routerLink]="'lazy-module'"></button>
+
 <router-outlet></router-outlet>

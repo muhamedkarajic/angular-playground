@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { take, debounceTime, map, ReplaySubject, Subject, takeUntil, withLatestFrom, BehaviorSubject, combineLatest } from 'rxjs';
+import { take, map, ReplaySubject, Subject, takeUntil, BehaviorSubject, withLatestFrom, combineLatest, debounceTime } from 'rxjs';
+import { Required } from '../decorators/required.decorator';
+import { RequiredInputs } from '../decorators/until-destory.decorator/until-destroy';
 
+@RequiredInputs<MyMultiSelectorComponent>({})
 @Component({
   selector: 'my-multi-selector',
   templateUrl: './my-multi-selector.component.html',
@@ -8,8 +11,7 @@ import { take, debounceTime, map, ReplaySubject, Subject, takeUntil, withLatestF
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyMultiSelectorComponent implements OnInit, OnDestroy {
-  readonly string = String;
-  readonly isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
+  public isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Optional input which will determine if the initial {@link onSelectedItemsChange} triggers.
@@ -20,6 +22,8 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
   readonly selectedItems$ = new BehaviorSubject<string[]>([]);
 
+  @Required({disallowedValues:[],allowedValues: [undefined]}) readonly data$ = new ReplaySubject<string[] | undefined>();
+
   /**
    * Optional input property which represents currently selected items 
    * which are possible to be selected based on {@link data$}.
@@ -28,14 +32,12 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     this.selectedItems$.next(selectedItems);
   }
 
-  readonly data$ = new ReplaySubject<string[]>();
-
   readonly dataWithDetails$ = new ReplaySubject<{ value: string, selected: boolean }[]>();
 
   /*
    * The input data which represents the possible values which can be selected.
    */
-  @Input() set data(data: string[]) {
+  @Input() set data(data: string[] | undefined) {
     this.data$.next(data);
   }
 
@@ -79,7 +81,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     this.selectedItems$.pipe(
       withLatestFrom(this.data$),
       map(([selectedItems, data]) => {
-        const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
+        const selectedItemsFiltered = selectedItems.filter(selectedItem => data!.some(d => d === selectedItem));
         return selectedItemsFiltered;
       }),
       takeUntil(this.onDestory$)
@@ -91,7 +93,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     this.data$.pipe(
       withLatestFrom(this.selectedItems$),
       map(([data, selectedItems]) => {
-        const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
+        const selectedItemsFiltered = selectedItems.filter(selectedItem => data!.some(d => d === selectedItem));
         return selectedItemsFiltered;
       }),
       takeUntil(this.onDestory$)
@@ -111,7 +113,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
     combineLatest([this.data$, this.selectedItemsFiltered$]).pipe(
       map(([data, selectedItemsFiltered]) => {
-        return data.map(d => {
+        return data!.map(d => {
           return {
             value: d,
             selected: selectedItemsFiltered.some(selectedItem => selectedItem === d)

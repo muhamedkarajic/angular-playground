@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
+import { EagerComponent } from './eager/eager.component';
 import { EagerModule } from './eager/eager.module';
 
 
@@ -11,6 +12,10 @@ const routes: Routes = [
   {
     path: 'lazy-module',
     loadChildren: () => import('./lazy/lazy.module').then(m => m.LazyModule)
+  },
+  {
+    path: 'eager-module',
+    component: EagerComponent
   }
 ];
 

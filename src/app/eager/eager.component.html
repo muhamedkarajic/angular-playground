@@ -1,1 +1,21 @@
-<button [routerLink]="'lazy-module'">Lazy Module</button>
+<div>My Eager Component</div>
+
+<button [routerLink]="'/lazy-module'">Lazy Module</button>
+
+<ng-container *ngIf="{ myData$, selectedItems$, myObject$ } | await as props; else loading">
+    <div>Loaded!</div>
+    <!-- <my-multi-selector
+      [selectedItems]="props.selectedItems$.value"
+      [data]="undefined"
+      (onSelectedItemsChange)="onSelectedChange($event)"
+      [isInitialOnSelectedItemsChangeSkipped]="true"
+    ></my-multi-selector> -->
+  </ng-container>
+  
+  <!-- <ng-container *ngIf="{ x$, selectedItems$ } | combineLatest : false | async as props">
+    Rendered: {{props.x$.value}}
+  </ng-container> -->
+
+<ng-template #loading>
+    <div>Loading...</div>
+</ng-template>

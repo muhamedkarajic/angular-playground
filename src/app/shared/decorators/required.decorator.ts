@@ -24,9 +24,19 @@ export const Required_ = (config?: Partial<IRequiredConfig>) =>
         });
     }
 
-// export const Required_ = (config?: Partial<IRequiredConfig>) =>
+
+// export const Required_v2 = (config?: Partial<IRequiredConfig>) =>
 //     (target: any, key: string, descriptor: PropertyDescriptor) => {
 //         let _value: any;
+
+//         function decorateNgOnInit(
+//             onSet: (() => void) | null | undefined,
+//           ) {
+//             return function (this: any) {
+
+//             }
+//         }
+//         type.prototype.ngOnInit = decorateNgOnInit(type.prototype.ngOnInit);
 
 //         const mergedConfig = config ? {...defaultRequiredConfig, ...config} : defaultRequiredConfig;
 

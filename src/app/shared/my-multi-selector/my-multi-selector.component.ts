@@ -9,7 +9,7 @@ import { RequiredInputs } from '../decorators/until-destory.decorator/until-dest
   selector: 'my-multi-selector',
   templateUrl: './my-multi-selector.component.html',
   styleUrls: ['my-multi-selector.component.scss'],
-  //changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   public isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
@@ -73,12 +73,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     ).subscribe(selectedItems => this.selectedItems$.next(selectedItems));
   }
   
-  constructor(private readonly zone: NgZone) {
-
-  }
   ngOnInit(): void {
-    
-    
     /**
      * Provides the functionality to set values using inputs.
      * Will take data$ and based on it filter values which can't be set 

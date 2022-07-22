@@ -1,6 +1,6 @@
 
 import { ChangeDetectorRef, EventEmitter, OnDestroy, Pipe, PipeTransform, ɵisPromise } from '@angular/core';
-import { combineLatest, map, Observable, of, Subscribable, Unsubscribable, tap, from, shareReplay } from 'rxjs';
+import { combineLatest, map, Observable, of, Subscribable, Unsubscribable, tap, from, shareReplay, debounceTime } from 'rxjs';
 
 interface SubscriptionStrategy<T> {
     createSubscription(async: Subscribable<ObjectProps<T>> | Promise<ObjectProps<T>>, updateLatestValue: any): Unsubscribable

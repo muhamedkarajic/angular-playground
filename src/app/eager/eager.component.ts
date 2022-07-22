@@ -7,7 +7,7 @@ import { MyMultiSelectorComponent } from '../shared/my-multi-selector/my-multi-s
   selector: 'eager',
   templateUrl: './eager.component.html',
   styleUrls: ['./eager.component.scss'],
-  //changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EagerComponent {
   Object = Object;

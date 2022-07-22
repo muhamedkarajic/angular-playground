@@ -9,6 +9,13 @@
     (onSelectedItemsChange)="onSelectedChange($event)"
     [isInitialOnSelectedItemsChangeSkipped]="true"
   ></my-multi-selector>
+
+  <my-multi-selector #blockThree
+    [selectedItems]="props.selectedItems$.value"
+    [data]="props.myData$.value"
+    (onSelectedItemsChange)="onSelectedChange($event)"
+    [isInitialOnSelectedItemsChangeSkipped]="true"
+  ></my-multi-selector>
 </ng-container>
   
 <button [routerLink]="'/lazy-module'">Lazy Module</button>

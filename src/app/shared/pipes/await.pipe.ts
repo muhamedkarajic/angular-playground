@@ -1,15 +1,15 @@
 
-import { ChangeDetectorRef, EventEmitter, OnDestroy, Pipe, PipeTransform, ɵisPromise, ɵisSubscribable } from '@angular/core';
-import { combineLatest, isObservable, map, Observable, of, Subscribable, Unsubscribable, tap } from 'rxjs';
+import { ChangeDetectorRef, EventEmitter, OnDestroy, Pipe, PipeTransform, ɵisPromise } from '@angular/core';
+import { combineLatest, map, Observable, of, Subscribable, Unsubscribable, tap } from 'rxjs';
 
-interface SubscriptionStrategy {
-    createSubscription(async: Subscribable<any> | Promise<any>, updateLatestValue: any): Unsubscribable
-        | Promise<any>;
-    dispose(subscription: Unsubscribable | Promise<any>): void;
+interface SubscriptionStrategy<T> {
+    createSubscription(async: Subscribable<ObjectProps<T>> | Promise<ObjectProps<T>>, updateLatestValue: any): Unsubscribable
+        | Promise<ObjectProps<T>>;
+    dispose(subscription: Unsubscribable | Promise<ObjectProps<T>>): void;
 }
 
 type ObservableProps<T> = {
-    [K in keyof T]: Observable<T[K]>;
+    [K in keyof T]: Subscribable<T[K]> | Promise<T[K]> | EventEmitter<T[K]>;
 };
 
 type ObjectProps<T> = {
@@ -23,7 +23,7 @@ type MyObject<T> = {
     value: T[keyof T];
 }
 
-class SubscribableStrategy implements SubscriptionStrategy {
+class SubscribableStrategy<T> implements SubscriptionStrategy<T> {
     createSubscription(async: Subscribable<any>, updateLatestValue: any): Unsubscribable {
         return async.subscribe({
             next: updateLatestValue,
@@ -38,7 +38,7 @@ class SubscribableStrategy implements SubscriptionStrategy {
     }
 }
 
-class PromiseStrategy implements SubscriptionStrategy {
+class PromiseStrategy<T> implements SubscriptionStrategy<T> {
     createSubscription(async: Promise<any>, updateLatestValue: (v: any) => any): Promise<any> {
         return async.then(updateLatestValue, e => {
             throw e;
@@ -64,11 +64,11 @@ class Cache<T> {
 export class AwaitPipe<T> implements OnDestroy, PipeTransform {
     private _ref: ChangeDetectorRef | null;
 
-    private observable: Subscribable<any> | Promise<any> | EventEmitter<any> | null = null;
-    private subscription: Unsubscribable | Promise<any> | null = null;
-    private strategy: SubscriptionStrategy | null = null;
+    private observable: Subscribable<ObjectProps<T>> | Promise<ObjectProps<T>> | EventEmitter<ObjectProps<T>> | null = null;
+    private subscription: Unsubscribable | Promise<ObjectProps<T>> | null = null;
+    private strategy: SubscriptionStrategy<T> | null = null;
     private latestValue: ObjectProps<T> | null = null;
-    private observables: (Subscribable<any> | Promise<any> | EventEmitter<any>)[] | null = null;
+    private observables: (Subscribable<T> | Promise<T> | EventEmitter<T>)[] | null = null;
 
     subscriptionsCount = 0;
 
@@ -97,8 +97,8 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
                 const key = _key as keyof T;
                 const value = _value as Observable<T[keyof T]>;
 
-                if (!isObservable(_value))
-                    throw Error(`Provided object ${String(key)} is not an observable.`);
+                // if (!isObservable(_value))
+                //     throw Error(`Provided object ${String(key)} is not an observable.`);
 
                 const object$: Observable<MyObject<T>> = value.pipe(map(x => ({ key: key, value: x })));
 
@@ -107,17 +107,17 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
                 observableTasks.push(object$);
             }
 
-            if (observableTasks.length == 0) {
-                throw Error(`Provided object dosen't contain any props. Object ${objWithObservableProps}`);
-            }
+            // if (observableTasks.length == 0) {
+            //     throw Error(`Provided object dosen't contain any props. Object ${objWithObservableProps}`);
+            // }
 
             this.cache.observableTasks = observableTasks;
             this.cache.observables = observables;
 
             if (this.observables) {
-                if (this.cache.observables!.length !== this.observables.length) {
-                    throw Error(`Previous number of keys of don't match with current.`)
-                }
+                // if (this.cache.observables!.length !== this.observables.length) {
+                //     throw Error(`Previous number of keys of don't match with current.`)
+                // }
 
                 for (let i = 0; i < this.cache.observables!.length; i++) {
                     const _object$ = this.observables[i];
@@ -179,16 +179,14 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
     }
 
     private _selectStrategy(obj: Subscribable<any> | Promise<any> |
-        EventEmitter<any>): SubscriptionStrategy {
+        EventEmitter<any>): SubscriptionStrategy<T> {
         if (ɵisPromise(obj)) {
             return _promiseStrategy;
         }
 
-        if (ɵisSubscribable(obj)) {
             return _subscribableStrategy;
-        }
 
-        throw Error(`${AwaitPipe} throwed an error, strategy could not be selected. Object: ${obj}`);
+        // throw Error(`${AwaitPipe} throwed an error, strategy could not be selected. Object: ${obj}`);
     }
 
     private _dispose(): void {

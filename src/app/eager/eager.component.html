@@ -1,6 +1,5 @@
 <div>My Eager Component</div>
 
-
 <ng-container *ngIf="{ myData$, selectedItems$, myObject$ } | await as props; else loading">
   <my-multi-selector #blockThree
     [selectedItems]="props.selectedItems$.value"
@@ -10,13 +9,8 @@
   ></my-multi-selector>
 </ng-container>
   
-
 <button [routerLink]="'/lazy-module'">Lazy Module</button>
 
-  <!-- <ng-container *ngIf="{ x$, selectedItems$ } | await : false as props">
-    Rendered: {{props.x$.value | json}}
-  </ng-container> -->
-
 <ng-template #loading>
-    <div>Loading...</div>
+  <div>Loading...</div>
 </ng-template>

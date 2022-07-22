@@ -9,7 +9,7 @@ import { RequiredInputs } from '../decorators/until-destory.decorator/until-dest
   selector: 'my-multi-selector',
   templateUrl: './my-multi-selector.component.html',
   styleUrls: ['my-multi-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   public isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);

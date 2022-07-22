@@ -5,7 +5,7 @@ declare var global: any;
 @Component({
   selector: 'my-root',
   templateUrl: './root.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RootComponent {
   constructor(){

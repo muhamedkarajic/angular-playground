@@ -1,51 +1,60 @@
-import { Component } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject, take } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import { Object } from '../shared/models/object.model';
+import { MyMultiSelectorComponent } from '../shared/my-multi-selector/my-multi-selector.component';
+
 @Component({
   selector: 'eager',
   templateUrl: './eager.component.html',
-  styleUrls: ['./eager.component.scss']
+  styleUrls: ['./eager.component.scss'],
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EagerComponent {
   Object = Object;
   object = new Object() as any;
 
-  readonly myObject$ = new ReplaySubject<Object>(1);
+  myObject$ = new ReplaySubject<Object>(1);
   readonly myData$ = new BehaviorSubject<string[]>(['data1', 'data2', 'data3']);
   readonly selectedItems$ = new BehaviorSubject<string[]>(['data1', 'data2', 'data3']);
-  
+  myMultiSelectorComponent$ = new ReplaySubject<MyMultiSelectorComponent>(1);
+
+  @ViewChild('blockThree')
+  set myMultiSelectorComponent(v: MyMultiSelectorComponent | undefined) {
+    if(!v)
+      return;
+    this.myMultiSelectorComponent$.next(v);
+  }
+
   onSelectedChange(selectedItems: string[]) {
     console.log('onSelectedItemsChange', JSON.parse(JSON.stringify(selectedItems)));
   }
+
   readonly propertyA$ = new BehaviorSubject<string | null>('A');
   readonly propertyB$ = new ReplaySubject<string | null>(1);
   readonly x$ = new BehaviorSubject<string | null>(null);
 
   globalIndex = 0;
 
-  constructor() {
+  constructor(ref: ChangeDetectorRef) {
 
-    setTimeout(() => {
-      this.myObject$.next({id: 'myId', name: 'myName'})
-    }, 3000);
-
+    this.myMultiSelectorComponent$.subscribe(console.log);
     const someObservbale$ = of(undefined);
     const index = this.globalIndex;
     this.globalIndex++;
-    someObservbale$.pipe(
-      take(1)// Dont forget to unsubscribe - so take 1.
-    ).subscribe(() => {
-      console.log('index is: ', index);
-    });
 
+    setTimeout(() => {
+      this.myObject$.next({ id: 'myId', name: 'myName' });
+    }, 1000);
 
-
-    // setInterval(() => { (this.object as Object).id = "RANDOM_NAME_X2" }, 1000)
-    
     setTimeout(() => {
       this.propertyB$.next('B');
       this.selectedItems$.next(['data1', 'data3'])
       this.x$.next('test');
+    }, 2000);
+
+    setTimeout(() => {
+      this.myObject$ = new ReplaySubject(1);
+      this.myObject$.next({ id: 'myNewId', name: 'myNewName' });
     }, 3000);
 
     setTimeout(() => {

@@ -9,7 +9,7 @@ interface SubscriptionStrategy<T> {
 }
 
 type ObservableProps<T> = {
-    [K in keyof T]: Subscribable<T[K]> | Promise<T[K]> | EventEmitter<T[K]>;
+    [K in keyof T]: Observable<T[K]>;
 };
 
 type ObjectProps<T> = {
@@ -24,7 +24,7 @@ type MyObject<T> = {
 }
 
 class SubscribableStrategy<T> implements SubscriptionStrategy<T> {
-    createSubscription(async: Subscribable<any>, updateLatestValue: any): Unsubscribable {
+    createSubscription(async: Subscribable<ObjectProps<T>>, updateLatestValue: any): Unsubscribable {
         return async.subscribe({
             next: updateLatestValue,
             error: (e: any) => {
@@ -61,14 +61,14 @@ class Cache<T> {
     name: 'await',
     pure: false
 })
-export class AwaitPipe<T> implements OnDestroy, PipeTransform {
+export class AwaitPipe implements OnDestroy, PipeTransform {
     private _ref: ChangeDetectorRef | null;
 
-    private observable: Subscribable<ObjectProps<T>> | Promise<ObjectProps<T>> | EventEmitter<ObjectProps<T>> | null = null;
-    private subscription: Unsubscribable | Promise<ObjectProps<T>> | null = null;
-    private strategy: SubscriptionStrategy<T> | null = null;
-    private latestValue: ObjectProps<T> | null = null;
-    private observables: (Subscribable<T> | Promise<T> | EventEmitter<T>)[] | null = null;
+    private observable: Observable<ObjectProps<any>> | null = null;
+    private subscription: Unsubscribable | Promise<ObjectProps<any>> | null = null;
+    private strategy: SubscriptionStrategy<any> | null = null;
+    private latestValue: ObjectProps<any> | null = null;
+    private observables: (Subscribable<any> | Promise<any> | EventEmitter<any>)[] | null = null;
 
     subscriptionsCount = 0;
 
@@ -83,15 +83,15 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
         this._ref = null;
     }
 
-    cache = new Cache<T>();
+    cache = new Cache<any>();
 
-    transform(objWithObservableProps: ObservableProps<T>): ObjectProps<T> | null {
+    transform<T>(objWithObservableProps: ObservableProps<T>): ObjectProps<T> | null {
         if (this.cache.objWithObservableProps != objWithObservableProps) {
             this.cache.objWithObservableProps = objWithObservableProps;
 
             const observables: (Subscribable<any> | Promise<any> | EventEmitter<any>)[] = [];
 
-            const observableTasks: Observable<MyObject<T>>[] = [];
+            const observableTasks: Observable<MyObject<any>>[] = [];
 
             for (const [_key, _value] of Object.entries(objWithObservableProps)) {
                 const key = _key as keyof T;
@@ -100,7 +100,7 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
                 // if (!isObservable(_value))
                 //     throw Error(`Provided object ${String(key)} is not an observable.`);
 
-                const object$: Observable<MyObject<T>> = value.pipe(map(x => ({ key: key, value: x })));
+                const object$: Observable<MyObject<any>> = value.pipe(map(x => ({ key: key, value: x })));
 
                 observables.push(value);
 
@@ -142,7 +142,7 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
         return this.latestValue;
     }
 
-    combineObservables(observables$: Observable<MyObject<T>>[]): Observable<ObjectProps<T>> {
+    combineObservables<T>(observables$: Observable<MyObject<T>>[]): Observable<ObjectProps<T>> {
         this.subscriptionsCount++;
         console.log('subscriptionsCount', this.subscriptionsCount);
         const objects$ = observables$.length == 0 ? of([]) : combineLatest(observables$);
@@ -165,12 +165,12 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
         return obj$;
     }
 
-    private _subscribe(objs: (Subscribable<any> | Promise<any> | EventEmitter<any>)[], observables$: Observable<MyObject<T>>[]): void {
+    private _subscribe<T>(objs: (Subscribable<T> | Promise<T> | EventEmitter<T>)[], observables$: Observable<MyObject<T>>[]): void {
         const obs$ = this.combineObservables(observables$);
         this.observable = obs$;
         this.strategy = this._selectStrategy(obs$)
         this.subscription = this.strategy.createSubscription(
-            obs$, (value: Object) => this._updateLatestValue_(obs$, value)
+            obs$, (value: ObjectProps<T>) => this._updateLatestValue_(obs$, value)
         );
 
 
@@ -178,8 +178,8 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
 
     }
 
-    private _selectStrategy(obj: Subscribable<any> | Promise<any> |
-        EventEmitter<any>): SubscriptionStrategy<T> {
+    private _selectStrategy<T>(obj: Subscribable<T> | Promise<T> |
+        EventEmitter<T>): SubscriptionStrategy<T> {
         if (ɵisPromise(obj)) {
             return _promiseStrategy;
         }
@@ -198,8 +198,8 @@ export class AwaitPipe<T> implements OnDestroy, PipeTransform {
         this.observable = null;
     }
 
-    private _updateLatestValue_(async: any, value: any): void {
-        if (this.observable === async) {
+    private _updateLatestValue_<T>(async: Observable<ObjectProps<T>>, value: ObjectProps<T>): void {
+        if (this.observable == async) {
             this.latestValue = value;
             this._ref!.markForCheck();
         }

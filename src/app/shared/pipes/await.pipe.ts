@@ -1,6 +1,6 @@
 
 import { ChangeDetectorRef, EventEmitter, OnDestroy, Pipe, PipeTransform, ɵisPromise } from '@angular/core';
-import { combineLatest, map, Observable, of, Subscribable, Unsubscribable, tap } from 'rxjs';
+import { combineLatest, map, Observable, of, Subscribable, Unsubscribable, tap, from, shareReplay } from 'rxjs';
 
 interface SubscriptionStrategy<T> {
     createSubscription(async: Subscribable<ObjectProps<T>> | Promise<ObjectProps<T>>, updateLatestValue: any): Unsubscribable
@@ -9,7 +9,7 @@ interface SubscriptionStrategy<T> {
 }
 
 type ObservableProps<T> = {
-    [K in keyof T]: Observable<T[K]>;
+    [K in keyof T]: Subscribable<T[K]> | Promise<T[K]> | EventEmitter<T[K]> | Observable<T[K]>;
 };
 
 type ObjectProps<T> = {
@@ -95,14 +95,19 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
 
             for (const [_key, _value] of Object.entries(objWithObservableProps)) {
                 const key = _key as keyof T;
-                const value = _value as Observable<T[keyof T]>;
+                let value = _value as Observable<T[keyof T]> | Promise<T[keyof T]>;
 
                 // if (!isObservable(_value))
                 //     throw Error(`Provided object ${String(key)} is not an observable.`);
 
+                observables.push(value);
+
+                if (value instanceof Promise) {
+                    value = from(value);
+                }
+
                 const object$: Observable<MyObject<any>> = value.pipe(map(x => ({ key: key, value: x })));
 
-                observables.push(value);
 
                 observableTasks.push(object$);
             }
@@ -184,7 +189,7 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
             return _promiseStrategy;
         }
 
-            return _subscribableStrategy;
+        return _subscribableStrategy;
 
         // throw Error(`${AwaitPipe} throwed an error, strategy could not be selected. Object: ${obj}`);
     }

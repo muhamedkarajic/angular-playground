@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --hmr --port 4201",
     "build": "ng build",
+    "start": "node server.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "buildAsProduction": "ng build --configuration production",
     "startAsProduction": "ng serve --configuration production",
-    "buildAsProductionWithSourceMaps": "npm run build -- --configuration production --source-map=true"
+    "buildAsProductionWithSourceMaps": "npm run build -- --configuration production --source-map=true",
+    "serve": "ng serve --hmr --port 4201"
   },
   "private": true,
   "dependencies": {

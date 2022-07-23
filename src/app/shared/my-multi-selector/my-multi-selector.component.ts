@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
 import { take, map, ReplaySubject, Subject, takeUntil, BehaviorSubject, withLatestFrom, combineLatest, debounceTime } from 'rxjs';
-import { Required_ } from '../decorators/required.decorator';
+import { Required } from '../decorators/required.decorator';
 import { RequiredInputs } from '../decorators/until-destory.decorator/until-destroy';
 
 
@@ -38,7 +38,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   /*
    * The input data which represents the possible values which can be selected.
    */
-  @Input() @Required_() set data(data: string[] | undefined) {
+  @Input() @Required() set data(data: string[] | undefined) {
     this.data$.next(data);
   }
 

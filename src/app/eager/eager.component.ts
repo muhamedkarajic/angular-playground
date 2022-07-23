@@ -15,7 +15,7 @@ export class EagerComponent {
 
   myPromise$ = new Promise<string>((resolve) => resolve('string'));
   myObject$ = new ReplaySubject<Object>(1);
-  readonly myData$ = new BehaviorSubject<string[]>(['data1', 'data2', 'data3']);
+  readonly myData$ = new BehaviorSubject<string[]>(['data1', 'data2', 'data3', 'data4']);
   readonly selectedItems$ = new BehaviorSubject<string[]>(['data1', 'data2', 'data3']);
   myMultiSelectorComponent$ = new ReplaySubject<MyMultiSelectorComponent>(1);
 

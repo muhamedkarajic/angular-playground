@@ -1,6 +1,5 @@
-
 import { ChangeDetectorRef, EventEmitter, OnDestroy, Pipe, PipeTransform, ɵisPromise } from '@angular/core';
-import { combineLatest, map, Observable, of, Subscribable, Unsubscribable, tap, from, shareReplay, debounceTime } from 'rxjs';
+import { combineLatest, map, Observable, of, Subscribable, Unsubscribable, from, isObservable } from 'rxjs';
 
 interface SubscriptionStrategy<T> {
     createSubscription(async: Subscribable<ObjectProps<T>> | Promise<ObjectProps<T>>, updateLatestValue: any): Unsubscribable
@@ -70,8 +69,6 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
     private latestValue: ObjectProps<any> | null = null;
     private observables: (Subscribable<any> | Promise<any> | EventEmitter<any>)[] | null = null;
 
-    subscriptionsCount = 0;
-
     constructor(ref: ChangeDetectorRef) {
         this._ref = ref;
     }
@@ -97,8 +94,6 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
                 const key = _key as keyof T;
                 let value = _value as Observable<T[keyof T]> | Promise<T[keyof T]>;
 
-                // if (!isObservable(_value))
-                //     throw Error(`Provided object ${String(key)} is not an observable.`);
 
                 observables.push(value);
 
@@ -106,24 +101,19 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
                     value = from(value);
                 }
 
+                if (!isObservable(_value))
+                    throw Error(`Provided object ${String(key)} is not an observable.`);
+
                 const object$: Observable<MyObject<any>> = value.pipe(map(x => ({ key: key, value: x })));
 
 
                 observableTasks.push(object$);
             }
 
-            // if (observableTasks.length == 0) {
-            //     throw Error(`Provided object dosen't contain any props. Object ${objWithObservableProps}`);
-            // }
-
             this.cache.observableTasks = observableTasks;
             this.cache.observables = observables;
 
             if (this.observables) {
-                // if (this.cache.observables!.length !== this.observables.length) {
-                //     throw Error(`Previous number of keys of don't match with current.`)
-                // }
-
                 for (let i = 0; i < this.cache.observables!.length; i++) {
                     const _object$ = this.observables[i];
                     const object$ = this.cache.observables![i];
@@ -133,7 +123,6 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
                         return this.transform(objWithObservableProps);
                     }
                 }
-
             }
         }
 
@@ -148,8 +137,6 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
     }
 
     combineObservables<T>(observables$: Observable<MyObject<T>>[]): Observable<ObjectProps<T>> {
-        this.subscriptionsCount++;
-        console.log('subscriptionsCount', this.subscriptionsCount);
         const objects$ = observables$.length == 0 ? of([]) : combineLatest(observables$);
 
         let obj$ = objects$.pipe(map(objects => {
@@ -157,15 +144,6 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
             objects.forEach(object => objectProps[object.key] = { value: object.value })
             return objectProps;
         }));
-
-        // if (ignoreUndefined)
-        //   obj$ = obj$.pipe(filter(objects => {
-        //     const values = Object.values(objects) as ObjectProps<T[]>;
-        //     let x = values.some(v => v.value === undefined || v.value === null || (typeof v.value === 'number' && isNaN(v.value)));
-        //     return !x;
-        //   }));
-
-        obj$ = obj$.pipe(tap(console.log));
 
         return obj$;
     }
@@ -178,9 +156,7 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
             obs$, (value: ObjectProps<T>) => this._updateLatestValue_(obs$, value)
         );
 
-
         this.observables = objs;
-
     }
 
     private _selectStrategy<T>(obj: Subscribable<T> | Promise<T> |
@@ -190,13 +166,9 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
         }
 
         return _subscribableStrategy;
-
-        // throw Error(`${AwaitPipe} throwed an error, strategy could not be selected. Object: ${obj}`);
     }
 
     private _dispose(): void {
-        this.subscriptionsCount--;
-        console.log(this.subscriptionsCount);
         this.latestValue = null;
 
         this.strategy!.dispose(this.subscription!);

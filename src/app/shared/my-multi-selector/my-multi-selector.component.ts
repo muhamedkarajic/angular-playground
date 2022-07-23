@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { take, map, ReplaySubject, Subject, takeUntil, BehaviorSubject, withLatestFrom, combineLatest, debounceTime } from 'rxjs';
 import { Required } from '../decorators/required.decorator';
-import { RequiredInputs } from '../decorators/until-destory.decorator/until-destroy';
+import { RequiredInputs } from '../decorators/required-inputs.decorator';
 
 @RequiredInputs()
 @Component({

@@ -1,6 +1,6 @@
 <div>My Eager Component</div>
 
-<ng-container *ngIf="{ myData$, selectedItems$, myObject$ } | await as props; else loading">
+<ng-container *ngIf="{ myData$, selectedItems$ } | await as props; else loading">
   <my-multi-selector #blockThree
     [selectedItems]="props.selectedItems$.value"
     [data]="props.myData$.value"

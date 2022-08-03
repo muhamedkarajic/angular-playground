@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { take, map, ReplaySubject, Subject, takeUntil, BehaviorSubject, withLatestFrom, combineLatest, debounceTime } from 'rxjs';
+import { take, map, ReplaySubject, Subject, takeUntil, BehaviorSubject, withLatestFrom, combineLatest, debounceTime, switchMap } from 'rxjs';
 import { Required } from '../decorators/required.decorator';
 import { RequiredInputs } from '../decorators/required-inputs.decorator';
 
@@ -91,10 +91,17 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
      * Will be debounced so if selectedItems$ and data$ is set at the same time it dosen't emit same values twice.
      */
     this.selectedItemsFiltered$.pipe(
-      withLatestFrom(this.isInitialOnSelectedItemsChangeSkipped$), //withLatestFrom won't await observable isInitialOnSelectedItemsChangeSkipped$.
+      switchMap(selectedItemsFiltered => {//TODO: Make out of this a withLatestFrom combineLatestFrom operator
+        return this.isInitialOnSelectedItemsChangeSkipped$.pipe(
+          take(1),
+          map(isInitialOnSelectedItemsChangeSkipped => [selectedItemsFiltered, isInitialOnSelectedItemsChangeSkipped] as [string[], boolean])
+        )
+      }),
       debounceTime(0),
       takeUntil(this.onDestory$),
     ).subscribe(([selectedItemsFiltered, skipInitial]) => {
+      if (skipInitial) console.log('skipped initial');
+      if (!skipInitial) console.log('imited onSelectedItemsChange');
       skipInitial ? this.isInitialOnSelectedItemsChangeSkipped$.next(false) : this.onSelectedItemsChange.next(selectedItemsFiltered);
     });
 

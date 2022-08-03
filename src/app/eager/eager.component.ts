@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, map, of, ReplaySubject, switchMap, take, withLatestFrom } from 'rxjs';
 import { Object } from '../shared/models/object.model';
 import { MyMultiSelectorComponent } from '../shared/my-multi-selector/my-multi-selector.component';
 
@@ -31,45 +31,51 @@ export class EagerComponent {
   }
 
   readonly propertyA$ = new BehaviorSubject<string | null>('A');
-  readonly propertyB$ = new ReplaySubject<string | null>(1);
-  readonly x$ = new BehaviorSubject<string | null>(null);
-
-  globalIndex = 0;
+  readonly propertyB$ = new ReplaySubject<string[] | null>(1);
 
   constructor(ref: ChangeDetectorRef) {
-
-    this.myMultiSelectorComponent$.subscribe(console.log);
-    const someObservbale$ = of(undefined);
-    const index = this.globalIndex;
-    this.globalIndex++;
-
     setTimeout(() => {
-      this.myObject$.next({ id: 'myId', name: 'myName' });
-    }, 1000);
-
-    setTimeout(() => {
-      this.propertyB$.next('B');
-      this.selectedItems$.next(['data1', 'data3'])
-      this.x$.next('test');
+      this.propertyB$.next(['B']);
     }, 2000);
 
-    setTimeout(() => {
-      this.myObject$ = new ReplaySubject(1);
-      this.myObject$.next({ id: 'myNewId', name: 'myNewName' });
-    }, 3000);
+    this.propertyA$.pipe(switchMap(propertyA => {
+      return this.propertyB$.pipe(
+        take(1), 
+        map(propertyB => ([propertyA, propertyB] as [string, string[]]))
+      )
+    })).subscribe(x => console.log('propertyA & propertyB (combineLatestFrom): ', x));
 
-    setTimeout(() => {
-      this.propertyB$.next('B');
-      this.myData$.next(['data1', 'data2'])
-    }, 6000);
+    this.propertyA$.pipe(
+      withLatestFrom(this.propertyB$)
+    ).subscribe(x => console.log('propertyA & propertyB (withLatestFrom): ', x));
 
-    setTimeout(() => {
-      this.selectedItems$.next(['data3'])
-    }, 7000);
+    // setTimeout(() => {
+    //   this.myObject$.next({ id: 'myId', name: 'myName' });
+    // }, 1000);
 
-    setTimeout(() => {
-      this.myData$.next(['data1', 'data2', 'data3'])
-      this.selectedItems$.next(['data1', 'data2', 'data3'])
-    }, 9000);
+    // setTimeout(() => {
+    //   this.propertyB$.next('B');
+    //   this.selectedItems$.next(['data1', 'data3'])
+    //   this.x$.next('test');
+    // }, 2000);
+
+    // setTimeout(() => {
+    //   this.myObject$ = new ReplaySubject(1);
+    //   this.myObject$.next({ id: 'myNewId', name: 'myNewName' });
+    // }, 3000);
+
+    // setTimeout(() => {
+    //   this.propertyB$.next('B');
+    //   this.myData$.next(['data1', 'data2'])
+    // }, 6000);
+
+    // setTimeout(() => {
+    //   this.selectedItems$.next(['data3'])
+    // }, 7000);
+
+    // setTimeout(() => {
+    //   this.myData$.next(['data1', 'data2', 'data3'])
+    //   this.selectedItems$.next(['data1', 'data2', 'data3'])
+    // }, 9000);
   }
 }

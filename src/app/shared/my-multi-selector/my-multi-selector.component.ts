@@ -11,7 +11,7 @@ import { RequiredInputs } from '../decorators/required-inputs.decorator';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyMultiSelectorComponent implements OnInit, OnDestroy {
-  public isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
+  readonly isInitialOnSelectedItemsChangeSkipped$ = new BehaviorSubject<boolean>(true);
 
   /**
    * Optional input which will determine if the initial {@link onSelectedItemsChange} triggers.
@@ -22,7 +22,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
   readonly selectedItems$ = new BehaviorSubject<string[]>([]);
 
-  readonly data$ = new ReplaySubject<string[] | undefined>();
+  readonly data$ = new ReplaySubject<string[]>();
 
   /**
    * Optional input property which represents currently selected items 
@@ -37,7 +37,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   /*
    * The input data which represents the possible values which can be selected.
    */
-  @Input() @Required() set data(data: string[] | undefined) {
+  @Input() @Required() set data(data: string[]) {
     this.data$.next(data);
   }
 
@@ -71,7 +71,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestory$)
     ).subscribe(selectedItems => this.selectedItems$.next(selectedItems));
   }
-  
+
   ngOnInit(): void {
     /**
      * Provides the functionality to set values using inputs.
@@ -81,7 +81,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     this.selectedItems$.pipe(
       withLatestFrom(this.data$),
       map(([selectedItems, data]) => {
-        const selectedItemsFiltered = selectedItems.filter(selectedItem => data!.some(d => d === selectedItem));
+        const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
         return selectedItemsFiltered;
       }),
       takeUntil(this.onDestory$)
@@ -93,7 +93,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
     this.data$.pipe(
       withLatestFrom(this.selectedItems$),
       map(([data, selectedItems]) => {
-        const selectedItemsFiltered = selectedItems.filter(selectedItem => data!.some(d => d === selectedItem));
+        const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
         return selectedItemsFiltered;
       }),
       takeUntil(this.onDestory$)
@@ -113,7 +113,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
 
     combineLatest([this.data$, this.selectedItemsFiltered$]).pipe(
       map(([data, selectedItemsFiltered]) => {
-        return data!.map(d => {
+        return data.map(d => {
           return {
             value: d,
             selected: selectedItemsFiltered.some(selectedItem => selectedItem === d)
@@ -128,6 +128,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
    * Manages the destoryment of all subscriptions.
    */
   ngOnDestroy(): void {
+    this.onDestory$.next();
     this.onDestory$.complete();
   }
 }

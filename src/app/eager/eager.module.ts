@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { EagerComponent } from './eager.component';
 
-
 const routes: Routes = [
   {
     path: 'eager-component',

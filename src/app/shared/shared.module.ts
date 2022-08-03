@@ -8,6 +8,7 @@ import { MyCastPipe } from './pipes/my-cast.pipe';
 import { AwaitPipe } from './pipes/await.pipe';
 import { MyArePropsDefinedPipe } from './pipes/my-defined-props.pipe';
 import { MyTypeofPipe } from './pipes/my-typeof.pipe';
+import { MyTestComponentComponent } from './my-test-component/my-test-component.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { MyTypeofPipe } from './pipes/my-typeof.pipe';
     AwaitPipe,
     MyArePropsDefinedPipe,
     CalloutComponent,
+    MyTestComponentComponent,
     MyMultiSelectorComponent,
     CalloutDirective,
   ],
@@ -30,6 +32,7 @@ import { MyTypeofPipe } from './pipes/my-typeof.pipe';
     MyArePropsDefinedPipe,
     CalloutComponent,
     MyMultiSelectorComponent,
+    MyTestComponentComponent,
     CalloutDirective,
   ],
   entryComponents: [

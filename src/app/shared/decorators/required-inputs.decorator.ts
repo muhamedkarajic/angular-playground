@@ -11,8 +11,8 @@ function decorateNgOnInit(
 
     const props = Object.values(this.constructor.ɵcmp.inputs) as string[];
 
-    if(!props)
-      throw new Error(`${this.constructor.name} has no input props therefor ${RequiredInputs} decorator is useless.`);
+    if(!props || !props.length)
+      throw new Error(`${this.constructor.name} has no input props therefor ${RequiredInputs.name} decorator is useless.`);
 
     props.forEach(prop => {
       const obs$ = this[`${prop}$`] as Observable<unknown> | undefined;

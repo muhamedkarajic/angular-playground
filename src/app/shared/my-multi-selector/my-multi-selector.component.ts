@@ -75,24 +75,11 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     /**
      * Provides the functionality to set values using inputs.
-     * Will take data$ and based on it filter values which can't be set 
+     * Will take selectedItems$ and data$ and based on it filter values which can't be set 
      * and that will be shown as the {@link selectedItemsFiltered$}.
      */
-    this.selectedItems$.pipe(
-      withLatestFrom(this.data$),
+    combineLatest([this.selectedItems$, this.data$]).pipe(
       map(([selectedItems, data]) => {
-        const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
-        return selectedItemsFiltered;
-      }),
-      takeUntil(this.onDestory$)
-    ).subscribe(this.selectedItemsFiltered$);
-
-    /* 
-     * Whenever data$ is set we check selectedItems$ to ensure proper are set which exist.
-     */
-    this.data$.pipe(
-      withLatestFrom(this.selectedItems$),
-      map(([data, selectedItems]) => {
         const selectedItemsFiltered = selectedItems.filter(selectedItem => data.some(d => d === selectedItem));
         return selectedItemsFiltered;
       }),
@@ -104,7 +91,7 @@ export class MyMultiSelectorComponent implements OnInit, OnDestroy {
      * Will be debounced so if selectedItems$ and data$ is set at the same time it dosen't emit same values twice.
      */
     this.selectedItemsFiltered$.pipe(
-      withLatestFrom(this.isInitialOnSelectedItemsChangeSkipped$),
+      withLatestFrom(this.isInitialOnSelectedItemsChangeSkipped$), //withLatestFrom won't await observable isInitialOnSelectedItemsChangeSkipped$.
       debounceTime(0),
       takeUntil(this.onDestory$),
     ).subscribe(([selectedItemsFiltered, skipInitial]) => {

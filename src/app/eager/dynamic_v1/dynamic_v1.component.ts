@@ -7,7 +7,7 @@ import { IDynamicContentComponent } from '../dynamic-content/dynamic-content.com
   selector: 'dynamic_v1',
   templateUrl: './dynamic_v1.component.html',
 })
-export class DynamicComponent implements IDynamicContentComponent<string> {
+export class Dynamic_v1Component implements IDynamicContentComponent<string> {
   readonly text$ = new ReplaySubject<string>(1);
 
   @Input() set data(data: string) {

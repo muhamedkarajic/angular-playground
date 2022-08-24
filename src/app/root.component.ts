@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IDynamicContentComponent } from './eager/dynamic-content/dynamic-content.component';
-import { DynamicComponent } from './eager/dynamic_v1/dynamic_v1.component';
+import { Dynamic_v1Component } from './eager/dynamic_v1/dynamic_v1.component';
 import { Dynamic_v2Component } from './eager/dynamic_v2/dynamic_v2.component';
 import { nameof } from './shared/helpers/nameof.helper';
 
@@ -13,7 +13,7 @@ declare var global: any;
 })
 export class RootComponent {
   data$ = new BehaviorSubject<string>('Hello...');
-  componentType$ = new BehaviorSubject<Type<IDynamicContentComponent<string>>>(DynamicComponent);
+  componentType$ = new BehaviorSubject<Type<IDynamicContentComponent<string>>>(Dynamic_v1Component);
   
   constructor() {
     setTimeout(() => {
@@ -36,7 +36,7 @@ export class RootComponent {
   createContainer(): void
   {
     this.container.clear();
-    const dynamicComponentRef = this.container.createComponent(DynamicComponent);
-    dynamicComponentRef.setInput(nameof<DynamicComponent>('data'), 'My new Text');
+    const dynamicComponentRef = this.container.createComponent(Dynamic_v1Component);
+    dynamicComponentRef.setInput(nameof<Dynamic_v1Component>('data'), 'My new Text');
   }
 }

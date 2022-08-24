@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Type, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IDynamicContentComponent } from './eager/dynamic-content/dynamic-content.component';
 import { Dynamic_v1Component } from './eager/dynamic_v1/dynamic_v1.component';

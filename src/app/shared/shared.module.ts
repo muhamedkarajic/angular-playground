@@ -13,37 +13,33 @@ import { MyMapComponent } from './my-map/my-map.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
 
 @NgModule({
-  declarations: [
-    MyCastPipe,
-    MyTypeofPipe,
-    TruncatePipe,
-    AwaitPipe,
-
-    MyArePropsDefinedPipe,
-    CalloutComponent,
-    MyTestComponentComponent,
-    MyMultiSelectorComponent,
-    MyMapComponent,
-    CalloutDirective,
-  ],
-  imports: [
-    CommonModule,
-  ],
-  exports: [
-    CommonModule,
-    MyCastPipe,
-    TruncatePipe,
-    AwaitPipe,
-    MyArePropsDefinedPipe,
-    CalloutComponent,
-    MyMapComponent,
-    MyTestComponentComponent,
-    MyMultiSelectorComponent,
-    CalloutDirective,
-  ],
-  entryComponents: [
-    CalloutComponent
-  ],
-  providers: [AsyncPipe]
+    declarations: [
+        MyCastPipe,
+        MyTypeofPipe,
+        TruncatePipe,
+        AwaitPipe,
+        MyArePropsDefinedPipe,
+        CalloutComponent,
+        MyTestComponentComponent,
+        MyMultiSelectorComponent,
+        MyMapComponent,
+        CalloutDirective,
+    ],
+    imports: [
+        CommonModule,
+    ],
+    exports: [
+        CommonModule,
+        MyCastPipe,
+        TruncatePipe,
+        AwaitPipe,
+        MyArePropsDefinedPipe,
+        CalloutComponent,
+        MyMapComponent,
+        MyTestComponentComponent,
+        MyMultiSelectorComponent,
+        CalloutDirective,
+    ],
+    providers: [AsyncPipe]
 })
 export class SharedModule { }

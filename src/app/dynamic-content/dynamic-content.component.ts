@@ -4,8 +4,8 @@ import { combineLatest, ReplaySubject, switchMap, take, map } from 'rxjs';
 
 import { nameof } from '../shared/helpers/nameof.helper';
 
-export interface IDynamicContentComponent {
-  set data(data: unknown);
+export interface IDynamicContentComponent<T> {
+  data: T;
 }
 
 @UntilDestroy()
@@ -13,15 +13,15 @@ export interface IDynamicContentComponent {
   selector: 'dynamic-content',
   templateUrl: './dynamic-content.component.html',
 })
-export class DynamicContentComponent implements IDynamicContentComponent {
+export class DynamicContentComponent implements IDynamicContentComponent<string> {
 
-  readonly componentType$ = new ReplaySubject<Type<IDynamicContentComponent>>(1);
-  @Input() set component(component: Type<IDynamicContentComponent>) {
+  readonly componentType$ = new ReplaySubject<Type<IDynamicContentComponent<string>>>(1);
+  @Input() set component(component: Type<IDynamicContentComponent<string>>) {
     this.componentType$.next(component);
   }
 
   readonly data$ = new ReplaySubject<unknown>(1);
-  @Input() set data(data: unknown) {
+  @Input() set data(data: string) {
     this.data$.next(data);
   }
 
@@ -56,7 +56,7 @@ export class DynamicContentComponent implements IDynamicContentComponent {
     combineLatest([this.data$, this.componentRef$]).pipe(
       untilDestroyed(this)
     ).subscribe(([data, componentRef]) => {
-      componentRef.setInput(nameof<IDynamicContentComponent>('data'), data);
+      componentRef.setInput(nameof<IDynamicContentComponent<string>>('data'), data);
     });
   }
 }

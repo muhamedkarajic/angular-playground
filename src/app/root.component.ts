@@ -9,12 +9,11 @@ declare var global: any;
 
 @Component({
   selector: 'my-root',
-  templateUrl: './root.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './root.component.html'
 })
 export class RootComponent {
   data$ = new BehaviorSubject<string>('Hello...');
-  componentType$ = new BehaviorSubject<Type<IDynamicContentComponent>>(DynamicComponent);
+  componentType$ = new BehaviorSubject<Type<IDynamicContentComponent<string>>>(DynamicComponent);
   
   constructor() {
     setTimeout(() => {

@@ -9,5 +9,5 @@ import { RequiredInputs } from '../decorators/required-inputs.decorator';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyTestComponentComponent {
-  
+
 }

@@ -7,13 +7,10 @@ import { IDynamicContentComponent } from '../dynamic-content/dynamic-content.com
   selector: 'dynamic',
   templateUrl: './dynamic.component.html',
 })
-export class DynamicComponent implements IDynamicContentComponent {
-  
+export class DynamicComponent implements IDynamicContentComponent<string> {
   readonly text$ = new ReplaySubject<string>(1);
-  
-  @Input() set data(data: string)
-  {
-    console.log('set data', data);
+
+  @Input() set data(data: string) {
     this.text$.next(data);
   }
 }

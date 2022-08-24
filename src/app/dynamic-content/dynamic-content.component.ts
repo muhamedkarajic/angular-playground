@@ -1,18 +1,23 @@
 import { ChangeDetectorRef, Component, ComponentRef, Input, Type, ViewChild, ViewContainerRef } from '@angular/core';
-import { combineLatest, ReplaySubject, switchMap, skip, take, map } from 'rxjs';
-import { nameof } from '../shared/helpers/nameof.helper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { combineLatest, ReplaySubject, switchMap, take, map } from 'rxjs';
+
+import { nameof } from '../shared/helpers/nameof.helper';
+
+export interface IDynamicContentComponent {
+  set data(data: unknown);
+}
 
 @UntilDestroy()
 @Component({
   selector: 'dynamic-content',
   templateUrl: './dynamic-content.component.html',
 })
-export class DynamicContentComponent {
+export class DynamicContentComponent implements IDynamicContentComponent {
 
-  readonly component$ = new ReplaySubject<Type<unknown>>(1);
-  @Input() set component(component: Type<unknown>) {
-    this.component$.next(component);
+  readonly componentType$ = new ReplaySubject<Type<IDynamicContentComponent>>(1);
+  @Input() set component(component: Type<IDynamicContentComponent>) {
+    this.componentType$.next(component);
   }
 
   readonly data$ = new ReplaySubject<unknown>(1);
@@ -30,32 +35,28 @@ export class DynamicContentComponent {
   readonly componentRef$ = new ReplaySubject<ComponentRef<unknown>>(1);
 
   constructor(
-    private changeDetectionRef : ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef
   ) {
-    this.component$.pipe(
-      switchMap(component => combineLatest([this.dynamicContainerRef$, this.data$]).pipe(
+    this.componentType$.pipe(
+      switchMap(componentType => this.dynamicContainerRef$.pipe(
         take(1),
-        map(([dynamicContainerRef, data]) => ({ dynamicContainerRef, component, data }))
+        map(dynamicContainerRef => ({ dynamicContainerRef, componentType }))
       )),
       untilDestroyed(this)
-    ).subscribe(({ component, dynamicContainerRef, data }) => {
-      console.log('component$ sub');
+    ).subscribe(({ componentType, dynamicContainerRef }) => {
 
       dynamicContainerRef.clear();
 
-      const componentRef = dynamicContainerRef.createComponent(component);
-      componentRef.setInput(nameof<DynamicContentComponent>('data'), data);
+      const componentRef = dynamicContainerRef.createComponent(componentType);
       this.componentRef$.next(componentRef);
 
-      this.changeDetectionRef.detectChanges();
+      this.changeDetectorRef.detectChanges();
     });
 
     combineLatest([this.data$, this.componentRef$]).pipe(
-      skip(1),
       untilDestroyed(this)
     ).subscribe(([data, componentRef]) => {
-      console.log('data$&componentRef sub');
-      componentRef.setInput(nameof<DynamicContentComponent>('data'), data);
+      componentRef.setInput(nameof<IDynamicContentComponent>('data'), data);
     });
   }
 }

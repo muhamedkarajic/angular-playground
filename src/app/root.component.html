@@ -19,7 +19,7 @@
 <ng-container #dynamicContainer></ng-container>
 
 <ng-container *ngIf="{data$, componentType$} | await as props">
-    <dynamic-content [component]="props.componentType$.value" [data]="props.data$.value"></dynamic-content>
+    <dynamic-content [data]="props.data$.value" [component]="props.componentType$.value"></dynamic-content>
 </ng-container>
 
 <button (click)="createContainer()">Create Container</button>

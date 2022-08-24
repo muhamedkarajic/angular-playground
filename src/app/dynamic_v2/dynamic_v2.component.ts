@@ -2,10 +2,10 @@ import { Component, Input } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 
 @Component({
-  selector: 'dynamic',
-  templateUrl: './dynamic.component.html',
+  selector: 'dynamic_v2',
+  templateUrl: './dynamic_v2.component.html',
 })
-export class DynamicComponent {
+export class Dynamic_v2Component {
   
   readonly text$ = new ReplaySubject<string>(1);
   

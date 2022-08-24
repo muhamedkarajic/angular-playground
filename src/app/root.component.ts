@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Type, ViewChild, ViewContainerRef } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { DynamicComponent } from './dynamic/dynamic.component';
+import { Dynamic_v2Component } from './dynamic_v2/dynamic_v2.component';
+import { nameof } from './shared/helpers/nameof.helper';
 
 declare var global: any;
 
@@ -9,12 +12,24 @@ declare var global: any;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RootComponent {
+  data$ = new BehaviorSubject<string>('Hello...');
+  componentType$ = new BehaviorSubject<Type<unknown>>(DynamicComponent);
+  
   constructor() {
     setTimeout(() => {
       const document = global.document as Document;
       const div = document.getElementById("myDiv");
       div!.innerHTML="<div></br>Hello World</br></br></div>"
     }, 1000);
+
+    setTimeout(() => {
+      this.data$.next('Hello... World!');
+    }, 2000);
+
+    setTimeout(() => {
+      this.componentType$.next(Dynamic_v2Component);
+    }, 4000);
+
   }
 
   @ViewChild('dynamicContainer', {read: ViewContainerRef}) container!: ViewContainerRef;
@@ -23,7 +38,6 @@ export class RootComponent {
   {
     this.container.clear();
     const dynamicComponentRef = this.container.createComponent(DynamicComponent);
-    dynamicComponentRef.setInput('x', 'test');
+    dynamicComponentRef.setInput(nameof<DynamicComponent>('data'), 'My new Text');
   }
-  
 }

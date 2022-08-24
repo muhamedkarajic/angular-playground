@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
+import { DynamicComponent } from './dynamic/dynamic.component';
 import { EagerComponent } from './eager/eager.component';
 import { EagerModule } from './eager/eager.module';
 
@@ -22,6 +23,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     RootComponent,
+    DynamicComponent,
   ],
   imports: [
     BrowserModule,

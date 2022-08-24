@@ -9,17 +9,21 @@ import { AwaitPipe } from './pipes/await.pipe';
 import { MyArePropsDefinedPipe } from './pipes/my-defined-props.pipe';
 import { MyTypeofPipe } from './pipes/my-typeof.pipe';
 import { MyTestComponentComponent } from './my-test-component/my-test-component.component';
+import { MyMapComponent } from './my-map/my-map.component';
+import { TruncatePipe } from './pipes/truncate.pipe';
 
 @NgModule({
   declarations: [
     MyCastPipe,
     MyTypeofPipe,
-    
+    TruncatePipe,
     AwaitPipe,
+
     MyArePropsDefinedPipe,
     CalloutComponent,
     MyTestComponentComponent,
     MyMultiSelectorComponent,
+    MyMapComponent,
     CalloutDirective,
   ],
   imports: [
@@ -28,11 +32,13 @@ import { MyTestComponentComponent } from './my-test-component/my-test-component.
   exports: [
     CommonModule,
     MyCastPipe,
+    TruncatePipe,
     AwaitPipe,
     MyArePropsDefinedPipe,
     CalloutComponent,
-    MyMultiSelectorComponent,
+    MyMapComponent,
     MyTestComponentComponent,
+    MyMultiSelectorComponent,
     CalloutDirective,
   ],
   entryComponents: [

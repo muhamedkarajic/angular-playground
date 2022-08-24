@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { BehaviorSubject, map, of, ReplaySubject, switchMap, take, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, combineLatestWith, map, of, ReplaySubject, switchMap, take, tap, withLatestFrom } from 'rxjs';
 import { Object } from '../shared/models/object.model';
 import { MyMultiSelectorComponent } from '../shared/my-multi-selector/my-multi-selector.component';
 
@@ -34,20 +34,31 @@ export class EagerComponent {
   readonly propertyB$ = new ReplaySubject<string[] | null>(1);
 
   constructor(ref: ChangeDetectorRef) {
-    setTimeout(() => {
-      this.propertyB$.next(['B']);
-    }, 2000);
+    // this.propertyA$.pipe(
+    //   tap(console.log),
+    //   switchMap(x => combineLatest([this.propertyB$]).pipe(map(y => [x, y]), take(1))),
+    // ).subscribe(console.log);
+    
+    // setTimeout(() => {
+    //   this.propertyB$.next(['B1']);
+    // }, 2000);
+    // setTimeout(() => {
+    //   this.propertyB$.next(['B2']);
+    // }, 3000);
+    // setTimeout(() => {
+    //   this.propertyA$.next('A2');
+    // }, 4000);
 
-    this.propertyA$.pipe(switchMap(propertyA => {
-      return this.propertyB$.pipe(
-        take(1), 
-        map(propertyB => ([propertyA, propertyB] as [string, string[]]))
-      )
-    })).subscribe(x => console.log('propertyA & propertyB (combineLatestFrom): ', x));
+    // this.propertyA$.pipe(switchMap(propertyA => {
+    //   return this.propertyB$.pipe(
+    //     take(1), 
+    //     map(propertyB => ([propertyA, propertyB] as [string, string[]]))
+    //   )
+    // })).subscribe(x => console.log('propertyA & propertyB (combineLatestFrom): ', x));
 
-    this.propertyA$.pipe(
-      withLatestFrom(this.propertyB$)
-    ).subscribe(x => console.log('propertyA & propertyB (withLatestFrom): ', x));
+    // this.propertyA$.pipe(
+    //   withLatestFrom(this.propertyB$)
+    // ).subscribe(x => console.log('propertyA & propertyB (withLatestFrom): ', x));
 
     // setTimeout(() => {
     //   this.myObject$.next({ id: 'myId', name: 'myName' });

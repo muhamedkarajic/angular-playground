@@ -2,5 +2,22 @@
     "editor.tokenColorCustomizations": {
         "comments": "",
         "textMateRules": []
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/.gitattributes": true,
+        "**/.gitignore": true,
+        "**/.vs": true,
+        "**/.vscode": true,
+        "**/**.Artifacts": true,
+        "**/**.sln": true,
+        "**/bin": true,
+        "**/obj": true,
+        "**/node_modules": true
     }
 }

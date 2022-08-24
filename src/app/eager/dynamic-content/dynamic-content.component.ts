@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ComponentRef, Input, Type, ViewChild, Vie
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, ReplaySubject, switchMap, take, map } from 'rxjs';
 
-import { nameof } from '../shared/helpers/nameof.helper';
+import { nameof } from '../../shared/helpers/nameof.helper';
 
 export interface IDynamicContentComponent<T> {
   data: T;

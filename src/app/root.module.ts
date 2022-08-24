@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
-import { DynamicContentComponent } from './dynamic-content/dynamic-content.component';
-import { DynamicComponent } from './dynamic/dynamic.component';
-import { Dynamic_v2Component } from './dynamic_v2/dynamic_v2.component';
+import { DynamicContentComponent } from './eager/dynamic-content/dynamic-content.component';
+import { DynamicComponent } from './eager/dynamic_v1/dynamic_v1.component';
+import { Dynamic_v2Component } from './eager/dynamic_v2/dynamic_v2.component';
 import { EagerComponent } from './eager/eager.component';
 import { EagerModule } from './eager/eager.module';
 import { RootComponent } from './root.component';

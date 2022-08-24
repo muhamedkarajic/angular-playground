@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { IDynamicContentComponent } from './dynamic-content/dynamic-content.component';
-import { DynamicComponent } from './dynamic/dynamic.component';
-import { Dynamic_v2Component } from './dynamic_v2/dynamic_v2.component';
+import { IDynamicContentComponent } from './eager/dynamic-content/dynamic-content.component';
+import { DynamicComponent } from './eager/dynamic_v1/dynamic_v1.component';
+import { Dynamic_v2Component } from './eager/dynamic_v2/dynamic_v2.component';
 import { nameof } from './shared/helpers/nameof.helper';
 
 declare var global: any;

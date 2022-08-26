@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { BehaviorSubject, combineLatest, combineLatestWith, map, of, ReplaySubject, switchMap, take, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { Object } from '../shared/models/object.model';
 import { MyMultiSelectorComponent } from '../shared/my-multi-selector/my-multi-selector.component';
 

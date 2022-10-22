@@ -1,4 +1,14 @@
 {
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
-  "recommendations": ["angular.ng-template"]
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "hoovercj.vscode-settings-cycler",
+    "johnpapa.angular2",
+    "alefragnani.bookmarks",
+    "ms-dotnettools.csharp",
+    "pranaygp.vscode-css-peek",
+    "ms-azuretools.vscode-docker",
+    "ritwickdey.liveserver",
+    "jmrog.vscode-nuget-package-manager"
+  ]
 }

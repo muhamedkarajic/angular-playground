@@ -62,6 +62,9 @@ export type SwitchTransform<I, O, E> = (input: I) => Result<O, E>;
 export function andThen<I, O, E, F>(
   mapFunc: SwitchTransform<I, O, E>
 ): OperatorFunction<Result<I, F>, Result<O, E | F>> {
+
+  console.log(mapFunc.constructor.name);
+
   return pipe(
     map(x => {
       return x.isOk ? mapFunc(x.value) : x as Err<any, E | F>; // tslint:disable-line
@@ -76,6 +79,8 @@ export function andThen<I, O, E, F>(
  export function asyncAndThen<I, O, E, F>(
   mapFunc: AsyncSwitchTransform<I, O, E>
 ): OperatorFunction<Result<I, F>, Result<O, E | F>> {
+  console.log(mapFunc.constructor.name);
+
   return pipe(
     switchMap(x => {
       return x.isOk ? mapFunc(x.value) : of(x as Err<any, E | F>);

@@ -5,6 +5,7 @@
   -webkit-tap-highlight-color: #ffffff00;
   -webkit-focus-ring-color: #ffffff00;
   outline: none;
+
   &:focus {
     outline: none;
   }
@@ -32,6 +33,7 @@ body {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: $primary-color;
 }
@@ -64,4 +66,3 @@ select:-webkit-autofill:focus {
   transition: background-color 5000s ease-in-out 0s;
   font-family: $font-family;
 }
-

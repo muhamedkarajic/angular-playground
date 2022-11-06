@@ -1,9 +1,0 @@
-@import "src/styles/variables.scss";
-
-.item {
-  cursor: pointer;
-  color: $primary-color;
-  &:hover {
-    color: red;
-  }
-}

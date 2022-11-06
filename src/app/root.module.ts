@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
-import { DynamicContentComponent } from './eager/dynamic-content/dynamic-content.component';
-import { Dynamic_v1Component } from './eager/dynamic_v1/dynamic_v1.component';
-import { Dynamic_v2Component } from './eager/dynamic_v2/dynamic_v2.component';
 import { EagerComponent } from './eager/eager.component';
 import { EagerModule } from './eager/eager.module';
 import { RootComponent } from './root.component';
@@ -15,17 +12,14 @@ const routes: Routes = [
     loadChildren: () => import('./lazy/lazy.module').then(m => m.LazyModule)
   },
   {
-    path: 'eager-module',
+    path: '',
     component: EagerComponent
   }
 ];
 
 @NgModule({
   declarations: [
-    RootComponent,
-    Dynamic_v1Component,
-    Dynamic_v2Component,
-    DynamicContentComponent
+    RootComponent
   ],
   
   imports: [

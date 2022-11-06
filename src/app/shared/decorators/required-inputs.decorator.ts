@@ -10,7 +10,6 @@ function decorateNgOnInit(
       ngOnInit.call(this);
 
     const props = Object.values(this.constructor.ɵcmp.inputs) as string[];
-    console.log('decorateNgOnInit');
     // if(!props || !props.length)
     //   throw new Error(`${this.constructor.name} has no input props therefor ${RequiredInputs.name} decorator is useless.`);
 

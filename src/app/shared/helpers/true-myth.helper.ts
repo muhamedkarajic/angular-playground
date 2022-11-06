@@ -78,7 +78,7 @@ export function andThen<I, O, E, F>(
 ): OperatorFunction<Result<I, F>, Result<O, E | F>> {
   return pipe(
     switchMap(x => {
-      return x.isOk ? mapFunc(x.value) : of(x as Err<any, E | F>); // tslint:disable-line
+      return x.isOk ? mapFunc(x.value) : of(x as Err<any, E | F>);
     })
   );
 }

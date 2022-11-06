@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { lastValueFrom, of, timer } from 'rxjs';
+import { lastValueFrom, of, tap, timer } from 'rxjs';
 import { Result } from 'true-myth';
 import { andThen, asyncAndThen } from './shared/helpers/true-myth.helper';
 import { v4 } from 'uuid';
@@ -43,11 +43,15 @@ class SavedUserAccount extends User {
 export class RootComponent implements OnInit {
   async ngOnInit() {
     const dorothyVaughan = new User('muhamedkarajic', 'Muhamed', 'Karajic');
+    let date: Date = new Date();
     of(Result.ok<User, UserError>(dorothyVaughan))
       .pipe(
+     
+    tap(() => date = new Date()),
         asyncAndThen(this.validateUsernameNotEmpty),
         andThen(this.validateUsernameHasValidChars),
         asyncAndThen(this.saveUser),
+        tap(() => console.log((new Date().getTime() - date.getTime()) * 0.001 + 'ms'))
       ).subscribe(result => {
         result.match({
           Ok: user => this.printSavedUser(user),
@@ -59,15 +63,20 @@ export class RootComponent implements OnInit {
   async saveUser(input: User): Promise<Result<SavedUserAccount, UserSaveError>> {
     // Let's pretend we made a call to our user database to save the user and
     //  this is the new user's user ID
-    await lastValueFrom(timer(1000));
+    await lastValueFrom(timer(50));
+
     if (Math.random() * 2 > 1 ? true : false)
       return Promise.resolve(Result.err(UserSaveError.DB_SAVE_FAILED))
+
+    await lastValueFrom(timer(500));
+
+      
     const savedUser = new SavedUserAccount(v4(), input.username, input.firstName, input.lastName);
     return Promise.resolve(Result.ok(savedUser));
   }
 
   async validateUsernameNotEmpty(input: User): Promise<Result<User, UserValidationError>> {
-    await lastValueFrom(timer(1000));
+    await lastValueFrom(timer(50));
 
     if (input.username.length === 0)
       return Result.err(UserValidationError.USERNAME_EMPTY);

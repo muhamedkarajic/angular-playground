@@ -78,7 +78,7 @@ export function map$<I, O, E, F>(
  */
  export function switchMap$<I, O, E, F>(
   mapFunc: AsyncSwitchTransform<I, O, E>
-): OperatorFunction<Result<I, F>, Result<O, E | F>> {
+): OperatorFunction<Result<I, F>, Result<O, E | F>> {  
   console.log(mapFunc.constructor.name);
 
   return pipe(

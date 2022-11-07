@@ -16,6 +16,3 @@ export class SavedUserAccount extends User {
         super(username, firstName, lastName);
     }
 }
-
-
-

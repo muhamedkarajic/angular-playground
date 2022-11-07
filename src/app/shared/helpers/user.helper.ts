@@ -24,9 +24,6 @@ export async function saveUser(input: User): Promise<Result<SavedUserAccount, Us
     if (Math.random() * 2 > 1 ? true : false)
         return Promise.resolve(Result.err(UserSaveError.DB_SAVE_FAILED))
 
-    await lastValueFrom(timer(500));
-
-
     const savedUser = new SavedUserAccount(v4(), input.username, input.firstName, input.lastName);
     return Promise.resolve(Result.ok(savedUser));
 }

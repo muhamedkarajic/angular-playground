@@ -59,7 +59,7 @@ export type SwitchTransform<I, O, E> = (input: I) => Result<O, E>;
  * Handles chaining async function calls that transform from one type to another
  * @param mapFunc
  */
-export function andThen<I, O, E, F>(
+export function map$<I, O, E, F>(
   mapFunc: SwitchTransform<I, O, E>
 ): OperatorFunction<Result<I, F>, Result<O, E | F>> {
 
@@ -76,7 +76,7 @@ export function andThen<I, O, E, F>(
  * Handles chaining async function calls that transform from one type to another
  * @param mapFunc
  */
- export function asyncAndThen<I, O, E, F>(
+ export function switchMap$<I, O, E, F>(
   mapFunc: AsyncSwitchTransform<I, O, E>
 ): OperatorFunction<Result<I, F>, Result<O, E | F>> {
   console.log(mapFunc.constructor.name);

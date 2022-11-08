@@ -2,8 +2,7 @@ import { lastValueFrom, timer } from "rxjs";
 import { Result } from "true-myth";
 import { v4 } from "uuid";
 import { SavedUserAccount, User } from "../models/user.model";
-
-export type loading = 'LOADING';
+import { IsLoading } from "../types/loading.type";
 
 export enum UserValidationError {
     USERNAME_EMPTY = 'Username cannot be empty!',
@@ -18,9 +17,9 @@ export enum UserSaveError {
 
 export type UserError = UserValidationError | UserSaveError;
 
-export async function saveUser(input: User | loading): Promise<Result<SavedUserAccount | loading, UserSaveError>> {
-    if(input === 'LOADING')
-        return Result.ok('LOADING');
+export async function saveUser(input: User | IsLoading): Promise<Result<SavedUserAccount | IsLoading, UserSaveError>> {
+    if(input instanceof IsLoading)
+        return IsLoading.get();
     
     // Let's pretend we made a call to our user database to save the user and
     //  this is the new user's user ID
@@ -33,10 +32,10 @@ export async function saveUser(input: User | loading): Promise<Result<SavedUserA
     return Promise.resolve(Result.ok(savedUser));
 }
 
-export async function validateUsernameNotEmpty(input: User | loading): Promise<Result<User | loading, UserValidationError>> {
+export async function validateUsernameNotEmpty(input: User | IsLoading): Promise<Result<User | IsLoading, UserValidationError>> {
     await lastValueFrom(timer(50));
-    if(input === 'LOADING')
-        return Result.ok('LOADING');
+    if(input instanceof IsLoading)
+        return IsLoading.get();
 
     if (input.username.length === 0)
         return Result.err(UserValidationError.USERNAME_EMPTY);
@@ -44,9 +43,9 @@ export async function validateUsernameNotEmpty(input: User | loading): Promise<R
     return Result.ok(input);
 }
 
-export function validateUsernameHasValidChars(input: User | loading): Result<User | loading, UserValidationError | UserError> {
-    if(input === 'LOADING')
-        return Result.ok('LOADING')
+export function validateUsernameHasValidChars(input: User | IsLoading): Result<User | IsLoading, UserValidationError | UserError> {
+    if(input instanceof IsLoading)
+        return IsLoading.get();
     
     if (!input.username.match(VALID_USERNAME_REGEX))
         return Result.err(UserValidationError.USERNAME_INVALID_CHARS);
@@ -54,7 +53,6 @@ export function validateUsernameHasValidChars(input: User | loading): Result<Use
 }
 
 export function printSavedUser(input: SavedUserAccount) {
-    console.log('User is valid: ', input);
 }
 
 export function printError(error: UserError) {

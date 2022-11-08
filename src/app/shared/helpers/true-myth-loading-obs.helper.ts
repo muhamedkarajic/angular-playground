@@ -13,11 +13,9 @@ import { IsLoading } from '../types/loading.type';
  * Handles chaining async function calls that transform from one type to another
  * @param mapFunc
  */
-export function mapLoading$<I extends IsLoading | unknown, O extends IsLoading | unknown, E, F>(
+export function mapLoadingObs$<I extends IsLoading | unknown, O extends IsLoading | unknown, E, F>(
   mapFunc: SwitchTransform<I, O, E>
 ): OperatorFunction<Result<I, F>, Result<O, E | F>> {
-
-  console.log(mapFunc.constructor.name);
 
   return pipe(
     map(x => {
@@ -33,7 +31,7 @@ export function mapLoading$<I extends IsLoading | unknown, O extends IsLoading |
  * Handles chaining async function calls that transform from one type to another
  * @param mapFunc
  */
-export function switchMapLoading$<I extends IsLoading | unknown, O extends IsLoading | unknown, E, F>(
+export function switchMapLoadingObs$<I extends IsLoading | unknown, O extends IsLoading | unknown, E, F>(
   mapFunc: AsyncSwitchTransform<I, O, E>
 ): OperatorFunction<Result<I, F>, Result<O, E | F>> {
   console.log(mapFunc.constructor.name);

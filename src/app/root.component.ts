@@ -1,29 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { of } from 'rxjs';
-import { Result } from 'true-myth';
-import { map$, switchMap$ } from './shared/helpers/true-myth.helper';
-import { printError, printSavedUser, saveUser, UserError, validateUsernameHasValidChars, validateUsernameNotEmpty } from './shared/helpers/user.helper';
-import { User } from './shared/models/user.model';
+import { entityCodeExample } from './shared/models/entity.model';
 
 @Component({
   selector: 'my-root',
   templateUrl: './root.component.html'
 })
 export class RootComponent implements OnInit {
-  async ngOnInit() {
-    const dorothyVaughan = new User('muhamedkarajic', 'Muhamed', 'Karajic');
-    let date: Date = new Date();
-    
-    of(Result.ok<User, UserError>(dorothyVaughan)).pipe(
-      switchMap$(validateUsernameNotEmpty),
-      map$(validateUsernameHasValidChars),
-      switchMap$(saveUser)
-    ).subscribe(result => {
-      result.match({
-        Ok: userOrLoading => userOrLoading === 'LOADING' ? console.log('user is still loading..') : printSavedUser(userOrLoading),
-        Err: error => printError(error),
-      });
-      console.log((new Date().getTime() - date.getTime()) * 0.001 + 'ms');
-    });
+  async ngOnInit(): Promise<void> {
+    // let date: Date = new Date();
+
+    // const user$ = new BehaviorSubject(IsLoading.get<User | IsLoading, UserError>());
+
+    // user$.pipe(
+    //   switchMapLoading$(validateUsernameNotEmpty),
+    //   mapLoading$(validateUsernameHasValidChars),
+    //   switchMapLoading$(saveUser)
+    // ).subscribe(result => {
+    //   result.match({
+    //     Ok: userOrLoading => userOrLoading instanceof IsLoading ? console.log('user is still loading..') : printSavedUser(userOrLoading),
+    //     Err: error => printError(error),
+    //   });
+    //   console.log((new Date().getTime() - date.getTime()) * 0.001 + 'ms');
+    // });
+
+    // combineLatest([user$.pipe(take(1))]).subscribe(([result]) => {
+    //   console.log('after combinedLatest')
+    //   const user = new User('muhamedkarajic', 'Muhamed', 'Karajic');
+
+    //   result.match({
+    //     Ok: userOrLoading => userOrLoading instanceof IsLoading ? user$.next(Result.ok(user)) : undefined,
+    //     Err: error => printError(error),
+    //   })
+    // })
+
+    await entityCodeExample();
   }
 }

@@ -2,9 +2,9 @@ import { Result } from 'true-myth';
 import { Err } from 'true-myth/src/public/result';
 
 import {
-    of,
-    OperatorFunction,
-    pipe,
+  of,
+  OperatorFunction,
+  pipe,
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -31,7 +31,7 @@ export function convertToAsync<S, E>(
 
 export class AsyncRailway<S, E> {
   private switches: Array<AsyncSwitch<S, E>> = [];
-  constructor(private readonly input: Result<S, E>) {}
+  constructor(private readonly input: Result<S, E>) { }
 
   static leaveTrainStation<S, E>(input: Result<S, E>) {
     return new AsyncRailway(input);
@@ -76,9 +76,9 @@ export function map$<I, O, E, F>(
  * Handles chaining async function calls that transform from one type to another
  * @param mapFunc
  */
- export function switchMap$<I, O, E, F>(
+export function switchMap$<I, O, E, F>(
   mapFunc: AsyncSwitchTransform<I, O, E>
-): OperatorFunction<Result<I, F>, Result<O, E | F>> {  
+): OperatorFunction<Result<I, F>, Result<O, E | F>> {
   console.log(mapFunc.constructor.name);
 
   return pipe(

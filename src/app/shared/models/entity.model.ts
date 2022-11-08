@@ -1,4 +1,4 @@
-import { lastValueFrom, timer, ReplaySubject, take } from "rxjs";
+import { lastValueFrom, timer, take, BehaviorSubject, catchError, EMPTY } from "rxjs";
 
 export interface IEntityState {
     state: Entity;
@@ -12,84 +12,62 @@ export class EntityState implements IEntityState {
         this.state = state;
     }
 
-    async onLoad(name: string): Promise<void> {
-        throw new Error("Invalid Operation: Cannot perform task in current state");
+    async onLoad(_: string): Promise<void> {
+        throw new Error('Invalid Operation: Cannot perform task in current state.');
     }
-}
-
-
-abstract class AbstractEntityState implements IEntityState {
-    state: Entity;
-
-    constructor(state: Entity) {
-        this.state = state;
-    }
-
-    async onLoad(name: string): Promise<void> {
-        throw new Error("Invalid Operation: Cannot perform task in current state");
-    }
-}
-
-export interface EntityInterface {
-    load(): Promise<void>;
 }
 
 export class Entity {
-    loading: EntityLoading;
-    loaded: EntityLoaded;
-
-    currentState = new ReplaySubject<IEntityState>(1);
+    state = new BehaviorSubject<IEntityState>(new EntityLoading(this));
 
     constructor() {
-        this.loading = new EntityLoading(this);
-        this.loaded = new EntityLoaded(this);
-
-        this.setState(this.loading);
-    }
-
-    public setState(state: IEntityState) {
-        this.currentState.next(state);
-    }
-
-    public getCurrentState(): ReplaySubject<IEntityState> {
-        return this.currentState;
+        this.state.pipe(
+            catchError(x => {
+                console.error(x);
+                return EMPTY;
+            })
+        ).subscribe();
     }
 }
 
-
-export class EntityLoading implements EntityState {
+export class AbstractEntityState implements EntityState {
     state: Entity;
 
     constructor(state: Entity) {
         this.state = state;
     }
 
-    async onLoad(name: string): Promise<void> {
+    async onLoad(_: string): Promise<void> {
+        throw Error(`${this.state.state.value.constructor.name} state isn't supporting '${this.onLoad.name}' function.`);
+    };
+}
+
+export class EntityLoading extends AbstractEntityState {
+    constructor(state: Entity) {
+        super(state);
+    }
+
+    override async onLoad(name: string): Promise<void> {
         await lastValueFrom(timer(1000));
 
-        this.state.loaded.name = name;
-
-        this.state.setState(this.state.loaded);
+        this.state.state.next(new EntityLoaded(this.state, name));
     };
 }
 
-export class EntityLoaded implements EntityState {
-    name!: string;
-    state: Entity;
 
-    constructor(state: Entity) {
-        this.state = state;
+export class EntityLoaded extends AbstractEntityState {
+    name: string;
+
+    constructor(state: Entity, name: string) {
+        super(state);
+        this.name = name;
     }
-
-    async onLoad(name: string): Promise<void> {
-        throw Error('Already Loaded.');
-    };
 }
 
 
 export async function entityCodeExample() {
     const entity = new Entity();
-    entity.getCurrentState().subscribe(x => {
+    entity.state.subscribe(x => {
         if (x instanceof EntityLoaded) {
             console.log('loaded', x);
         }
@@ -98,10 +76,11 @@ export async function entityCodeExample() {
         }
     });
 
-    const lastEntityState = await lastValueFrom(entity.getCurrentState().pipe(take(1)));
+    const lastEntityState = await lastValueFrom(entity.state.pipe(take(1)));
 
     await lastEntityState.onLoad('test');
 
-    if (entity.getCurrentState() instanceof EntityLoaded)
-        console.log('loaded', entity.getCurrentState())
+    const lastEntityState_test = await lastValueFrom(entity.state.pipe(take(1)));
+
+    await lastEntityState_test.onLoad('Should not work.');
 }

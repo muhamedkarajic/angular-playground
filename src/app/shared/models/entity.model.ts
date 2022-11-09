@@ -1,5 +1,6 @@
 import { NgxIndexedDBService } from "ngx-indexed-db";
 import { lastValueFrom, take, BehaviorSubject, catchError, EMPTY } from "rxjs";
+import { defaultError } from "../helpers/entity.helper";
 
 export class Entity {
     state = new BehaviorSubject<IEntityState>(EntityLoading.Instance(this));
@@ -33,11 +34,11 @@ export abstract class AbstractEntityState implements IAbstractEntityState {
     }
 
     async onLoad(_name: string, _indexDBService: NgxIndexedDBService): Promise<void> {
-        throw Error(`${this.entityRef.state.value.constructor.name} state isn't supporting '${this.onLoad.name}' function.`);
+        throw defaultError(this.entityRef, this.onLoad);
     };
 
     async saveToDataBase(_: NgxIndexedDBService): Promise<void> {
-        throw Error(`${this.entityRef.state.value.constructor.name} state isn't supporting '${this.saveToDataBase.name}' function.`);
+        throw defaultError(this.entityRef, this.saveToDataBase);
     }
 }
 export interface IAbstractEntityState {

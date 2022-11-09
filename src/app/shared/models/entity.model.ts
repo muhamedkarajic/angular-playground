@@ -1,20 +1,37 @@
-import { lastValueFrom, timer, take, BehaviorSubject, catchError, EMPTY } from "rxjs";
+import { lastValueFrom, take, BehaviorSubject, catchError, EMPTY, map, OperatorFunction, pipe, of } from "rxjs";
 
 export interface IEntityState {
-    state: Entity;
+    entity: Entity;
     onLoad: (name: string) => Promise<void>;
+    match: (matcher: Matcher) => Promise<void>;
 }
 
 export class EntityState implements IEntityState {
-    state: Entity;
+    entity: Entity;
 
     constructor(state: Entity) {
-        this.state = state;
+        this.entity = state;
     }
 
     async onLoad(_: string): Promise<void> {
         throw new Error('Invalid Operation: Cannot perform task in current state.');
     }
+
+    async match(matcher: Matcher): Promise<void> {
+        if (this.entity.state instanceof EntityLoaded && matcher.ok)
+            matcher.ok(this.entity.state);
+        else if (this.entity.state instanceof EntityLoading && matcher.loading)
+            matcher.loading(this.entity.state);
+        else if (matcher.undefined)
+            matcher.undefined();
+    }
+}
+
+
+export interface Matcher {
+    loading?: (entity: EntityLoading) => void,
+    ok?: (entity: EntityLoaded) => void,
+    undefined?: () => void
 }
 
 export class Entity {
@@ -31,14 +48,23 @@ export class Entity {
 }
 
 export class AbstractEntityState implements EntityState {
-    state: Entity;
+    entity: Entity;
 
     constructor(state: Entity) {
-        this.state = state;
+        this.entity = state;
+    }
+
+    async match(matcher: Matcher): Promise<void> {
+        if (this.entity.state.value instanceof EntityLoaded && matcher.ok)
+            matcher.ok(this.entity.state.value);
+        else if (this.entity.state.value instanceof EntityLoading && matcher.loading)
+            matcher.loading(this.entity.state.value);
+        else if (matcher.undefined)
+            matcher.undefined();
     }
 
     async onLoad(_: string): Promise<void> {
-        throw Error(`${this.state.state.value.constructor.name} state isn't supporting '${this.onLoad.name}' function.`);
+        throw Error(`${this.entity.state.value.constructor.name} state isn't supporting '${this.onLoad.name}' function.`);
     };
 }
 
@@ -47,10 +73,12 @@ export class EntityLoading extends AbstractEntityState {
         super(state);
     }
 
-    override async onLoad(name: string): Promise<void> {
-        await lastValueFrom(timer(1000));
+    override async onLoad(url: string): Promise<void> {
+        const name: string = await fetch(url)
+            .then(response => response.json())
+            .then(json => json.title);
 
-        this.state.state.next(new EntityLoaded(this.state, name));
+        this.entity.state.next(new EntityLoaded(this.entity, name));
     };
 }
 
@@ -67,18 +95,23 @@ export class EntityLoaded extends AbstractEntityState {
 
 export async function entityCodeExample() {
     const entity = new Entity();
-    entity.state.subscribe(x => {
-        if (x instanceof EntityLoaded) {
-            console.log('loaded', x);
-        }
-        else if (x instanceof EntityLoading) {
-            console.log('loading', x);
-        }
+    entity.state.subscribe(result => {
+        result.match({
+            loading(entity: EntityLoading) {
+                console.log('loading', entity);
+            },
+            ok(entity: EntityLoaded) {
+                console.log('ok', entity);
+            },
+            undefined() {
+                console.log('undefined');
+            }
+        })
     });
 
     const lastEntityState = await lastValueFrom(entity.state.pipe(take(1)));
 
-    await lastEntityState.onLoad('test');
+    await lastEntityState.onLoad('https://jsonplaceholder.typicode.com/todos/1');
 
     const lastEntityState_test = await lastValueFrom(entity.state.pipe(take(1)));
 

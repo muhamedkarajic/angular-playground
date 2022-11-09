@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, take } from 'rxjs';
-import { Result } from 'true-myth';
-import { mapLoading$, switchMapLoading$ } from './shared/helpers/true-myth-loading.helper';
-import { printError, printSavedUser, saveUser, UserError, validateUsernameHasValidChars, validateUsernameNotEmpty } from './shared/helpers/user.helper';
+import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { entityCodeExample } from './shared/models/entity.model';
-import { User } from './shared/models/user.model';
-import { IsLoading } from './shared/types/loading.type';
 
 @Component({
   selector: 'my-root',
   templateUrl: './root.component.html'
 })
 export class RootComponent implements OnInit {
+  
+  constructor(private indexBDService: NgxIndexedDBService) {
+    
+  }
+  
   async ngOnInit(): Promise<void> {
     // let date: Date = new Date();
 
@@ -39,6 +39,6 @@ export class RootComponent implements OnInit {
     //   })
     // })
 
-    await entityCodeExample();
+    await entityCodeExample(this.indexBDService);
   }
 }

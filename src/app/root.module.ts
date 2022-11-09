@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
+import { CoreModule } from './core/core.module';
 import { EagerComponent } from './eager/eager.component';
 import { EagerModule } from './eager/eager.module';
 import { RootComponent } from './root.component';
@@ -25,6 +26,7 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
+    CoreModule,
     SharedModule,
     EagerModule
   ],

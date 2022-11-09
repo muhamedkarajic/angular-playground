@@ -23,6 +23,7 @@
     "@angular/router": "^14.1.3",
     "@ngneat/until-destroy": "^9.2.1",
     "express": "^4.18.1",
+    "ngx-indexed-db": "^11.0.2",
     "rxjs": "~7.5.0",
     "true-myth": "^6.2.0",
     "tslib": "^2.3.0",

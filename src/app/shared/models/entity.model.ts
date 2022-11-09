@@ -1,37 +1,8 @@
+import { NgxIndexedDBService } from "ngx-indexed-db";
 import { lastValueFrom, take, BehaviorSubject, catchError, EMPTY } from "rxjs";
 
-export interface IEntityState {
-    entityRef: Entity;
-    onLoad: (name: string) => Promise<void>;
-    match: (matcher: IEntityResult) => Promise<void>;
-}
-
-export class EntityState implements IEntityState {
-    constructor(public entityRef: Entity) {}
-
-    async onLoad(_: string): Promise<void> {
-        throw new Error('Invalid Operation: Cannot perform task in current state.');
-    }
-
-    async match(result: IEntityResult): Promise<void> {
-        if (this.entityRef.state instanceof EntityLoaded && result.ok)
-            result.ok(this.entityRef.state);
-        else if (this.entityRef.state instanceof EntityLoading && result.loading)
-            result.loading(this.entityRef.state);
-        else if (result.undefined)
-            result.undefined();
-    }
-}
-
-
-export interface IEntityResult {
-    loading?: (entity: EntityLoading) => void,
-    ok?: (entity: EntityLoaded) => void,
-    undefined?: () => void
-}
-
 export class Entity {
-    state = new BehaviorSubject<IEntityState>(new EntityLoading(this));
+    state = new BehaviorSubject<IEntityState>(EntityLoading.Instance(this));
 
     constructor() {
         this.state.pipe(
@@ -43,9 +14,14 @@ export class Entity {
     }
 }
 
-export class AbstractEntityState implements EntityState {
-    constructor(public entityRef: Entity) {
-    }
+export interface IEntityState {
+    entityRef: Entity;
+    onLoad: (name: string, indexBDService: NgxIndexedDBService) => Promise<void>;
+    match: (matcher: IEntityResult) => Promise<void>;
+}
+
+export abstract class AbstractEntityState implements IAbstractEntityState {
+    protected constructor(public entityRef: Entity) { }
 
     async match(matcher: IEntityResult): Promise<void> {
         if (this.entityRef.state.value instanceof EntityLoaded && matcher.ok)
@@ -56,37 +32,81 @@ export class AbstractEntityState implements EntityState {
             matcher.undefined();
     }
 
-    async onLoad(_: string): Promise<void> {
+    async onLoad(_name: string, _indexDBService: NgxIndexedDBService): Promise<void> {
         throw Error(`${this.entityRef.state.value.constructor.name} state isn't supporting '${this.onLoad.name}' function.`);
     };
+
+    async saveToDataBase(_: NgxIndexedDBService): Promise<void> {
+        throw Error(`${this.entityRef.state.value.constructor.name} state isn't supporting '${this.saveToDataBase.name}' function.`);
+    }
+}
+export interface IAbstractEntityState {
+
+    match(matcher: IEntityResult): Promise<void>;
+
+    onLoad(_name: string, _indexDBService: NgxIndexedDBService): Promise<void>;
+
+    saveToDataBase(_: NgxIndexedDBService): Promise<void>;
 }
 
+
+
 export class EntityLoading extends AbstractEntityState {
-    constructor(entityRef: Entity) {
+    private constructor(entityRef: Entity) {
         super(entityRef);
     }
 
-    override async onLoad(url: string): Promise<void> {
+    static Instance(entityRef: Entity): EntityLoading {
+        return new EntityLoading(entityRef);
+    }
+
+    override async onLoad(url: string, indexBDService: NgxIndexedDBService): Promise<void> {
         const name: string = await fetch(url)
             .then(response => response.json())
             .then(json => json.title);
 
-        this.entityRef.state.next(new EntityLoaded(this.entityRef, name));
+        const entityProps: EntityLoaded['props'] | undefined = await lastValueFrom(indexBDService.getByKey('entities', '1'));
+
+        if (entityProps)
+            this.entityRef.state.next(EntityLoaded.Instance(this.entityRef, entityProps));
+        else
+            await lastValueFrom(indexBDService.update('entities', { id: '1', name: name }).pipe(catchError(err => {
+                console.log(err);
+                return EMPTY
+            })))
     };
 }
 
-
 export class EntityLoaded extends AbstractEntityState {
-    name: string;
+    props!: Record<string, unknown> & {
+        id: string;
+        name: string;
+    };
 
-    constructor(entityRef: Entity, name: string) {
+    private constructor(
+        entityRef: Entity
+    ) {
         super(entityRef);
-        this.name = name;
+    }
+
+    static Instance(entityRef: Entity, props: Record<string, unknown> & {
+        id: string;
+        name: string;
+    }): EntityLoaded {
+        const entityLoaded = new EntityLoaded(entityRef);
+        entityLoaded.props = props;
+        return entityLoaded;
     }
 }
 
+export interface IEntityResult {
+    loading?: (entity: EntityLoading) => void,
+    ok?: (entity: EntityLoaded) => void,
+    undefined?: () => void
+}
 
-export async function entityCodeExample() {
+
+export async function entityCodeExample(indexBDService: NgxIndexedDBService) {
     const entity = new Entity();
     entity.state.subscribe(result => {
         result.match({
@@ -104,9 +124,9 @@ export async function entityCodeExample() {
 
     const lastEntityState = await lastValueFrom(entity.state.pipe(take(1)));
 
-    await lastEntityState.onLoad('https://jsonplaceholder.typicode.com/todos/1');
+    await lastEntityState.onLoad('https://jsonplaceholder.typicode.com/todos/1', indexBDService);
 
     const lastEntityState_test = await lastValueFrom(entity.state.pipe(take(1)));
 
-    await lastEntityState_test.onLoad('Should not work.');
+    await lastEntityState_test.onLoad('Should not work.', indexBDService);
 }

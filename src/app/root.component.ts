@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { entityCodeExample } from './shared/models/entity.model';
 
 @Component({
   selector: 'my-root',
@@ -38,7 +37,5 @@ export class RootComponent implements OnInit {
     //     Err: error => printError(error),
     //   })
     // })
-
-    await entityCodeExample(this.indexBDService);
   }
 }

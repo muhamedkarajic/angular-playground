@@ -3,6 +3,7 @@
 
 module.exports = function (config) {
   config.set({
+    browserConsoleLogOptions: {level: "warn"},
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [

@@ -6,7 +6,7 @@
     "build": "ng build",
     "start": "node server.js",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "ng test --browsers ChromeHeadless",
     "buildAsProduction": "ng build --configuration production",
     "startAsProduction": "ng serve --configuration production",
     "buildAsProductionWithSourceMaps": "npm run build -- --configuration production --source-map=true",

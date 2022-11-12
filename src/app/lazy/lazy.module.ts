@@ -5,7 +5,6 @@ import { SharedModule } from '../shared/shared.module';
 import { LazySubComponent } from './lazy-sub/lazy-sub.component';
 import { LazyComponent } from './lazy.component';
 
-
 const routes: Routes = [
   {
     path: '',

@@ -1,12 +1,11 @@
-import { Result } from 'true-myth';
-import { Err } from 'true-myth/src/public/result';
-
 import {
   of,
   OperatorFunction,
-  pipe,
+  pipe
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { Result } from 'true-myth';
+import { Err } from 'true-myth/src/public/result';
 
 // Let's create a type alias for a Promise of a Result just to save us some typing
 export type AsyncResult<S, E> = Promise<Result<S, E>>;

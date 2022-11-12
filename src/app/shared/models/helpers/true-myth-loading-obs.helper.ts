@@ -1,13 +1,13 @@
-import { Result } from 'true-myth';
-import { Err } from 'true-myth/src/public/result';
 import {
   of,
   OperatorFunction,
-  pipe,
+  pipe
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { Result } from 'true-myth';
+import { Err } from 'true-myth/src/public/result';
+import { IsLoading } from '../../types/loading.type';
 import { AsyncSwitchTransform, SwitchTransform } from './true-myth.helper';
-import { IsLoading } from '../types/loading.type';
 
 /**
  * Handles chaining async function calls that transform from one type to another

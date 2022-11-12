@@ -7,9 +7,7 @@ import { EntityLoadedFromServerLockRequested } from "./entity-loaded-from-server
 export class EntityLoadFromServerSucceeded implements IEntityState {
     private constructor(public entityStateFactory: EntityStateFactory, public props: IEntity) { }
 
-    async match(matcher: IEntityResult): Promise<void> {
-
-    }
+    async match(matcher: IEntityResult): Promise<void> { }
 
     static async set(entityStateFactory: EntityStateFactory, payload: IEntity): Promise<void> {
         const entityLoadFromServerSucceeded = new EntityLoadFromServerSucceeded(entityStateFactory, payload);

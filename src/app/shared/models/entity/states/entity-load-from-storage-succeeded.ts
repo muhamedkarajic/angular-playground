@@ -1,39 +1,28 @@
-import { NgxIndexedDBService } from "ngx-indexed-db";
-import { lastValueFrom, timer } from "rxjs";
 import { EntityStateFactory } from "../entity-state-factory";
+import { EntityStateHelper } from "../entity-state-helper";
 import { IEntity } from "../i-entity";
-import { IEntityState } from "../i-entity-state";
 import { IEntityResult } from "../i-entity-result";
-import { EntityLoadFromServerFailed } from "./entity-load-from-server-failed";
-import { EntityLoadFromServerSucceeded } from "./entity-load-from-server-succeeded";
+import { IEntityState } from "../i-entity-state";
+import { EntityLoadedFromServerLockRequested } from "./entity-loaded-from-server-lock-requested";
 
 export class EntityLoadFromStorageSucceeded implements IEntityState {
-    private constructor(public entityFactory: EntityStateFactory, public props: IEntity) { }
+    private constructor(public entityStateFactory: EntityStateFactory, public props: IEntity) { }
 
-    static async set(entityFactory: EntityStateFactory, entityPayload: IEntity): Promise<void> {
-        const entityLoadedFromDB = new EntityLoadFromStorageSucceeded(entityFactory, entityPayload);
-        entityFactory.state$.next(entityLoadedFromDB);
-        void entityLoadedFromDB.requestFromServer(`${entityFactory.entityApiHub}/${entityFactory.id}`, entityFactory.indexDBService);
+    static async set(entityStateFactory: EntityStateFactory, entityPayload: IEntity): Promise<void> {
+        const entityLoadedFromDB = new EntityLoadFromStorageSucceeded(entityStateFactory, entityPayload);
+        entityStateFactory.state$.next(entityLoadedFromDB);
+        void entityLoadedFromDB.requestFromServer();
     }
 
     async match(matcher: IEntityResult): Promise<void> {
         matcher.ok?.(this);
     }
 
-    async requestFromServer(url: string, indexDBService: NgxIndexedDBService): Promise<void> {
-        await lastValueFrom(timer(5000));
+    async requestFromServer(): Promise<void> {
+        EntityStateHelper.requestFromServer(this.entityStateFactory);
+    }
 
-        try {
-            const name: string = await fetch(url)
-                .then(response => response.json())
-                .then(json => json.title);
-
-            const entityLoadedPayload: IEntity = { id: this.props.id, name: name, version: 1 };
-
-            await lastValueFrom(indexDBService.update<IEntity>('entities', entityLoadedPayload));
-            await EntityLoadFromServerSucceeded.set(this.entityFactory, entityLoadedPayload);
-        } catch (error) {
-            await EntityLoadFromServerFailed.set(this.entityFactory);
-        }
+    async lock() {
+        await EntityLoadedFromServerLockRequested.set(this.entityStateFactory, this.props);
     }
 }

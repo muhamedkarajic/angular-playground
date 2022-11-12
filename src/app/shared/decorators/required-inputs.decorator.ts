@@ -1,5 +1,5 @@
 import { InjectableType, ɵComponentType as ComponentType, ɵDirectiveType as DirectiveType } from '@angular/core';
-import { catchError, Observable, throwError, timeout, take, combineLatest, of, ReplaySubject } from 'rxjs';
+import { catchError, combineLatest, Observable, of, ReplaySubject, take, throwError, timeout } from 'rxjs';
 import { IRequiredConfig } from './required.decorator';
 
 function decorateNgOnInit(

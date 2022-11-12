@@ -1,5 +1,5 @@
 import { NgxIndexedDBService } from "ngx-indexed-db";
-import { lastValueFrom, timer } from "rxjs";
+import { lastValueFrom } from "rxjs";
 import { EntityStateFactory } from "../entity-state-factory";
 import { IEntity } from "../i-entity";
 import { IEntityResult } from "../i-entity-result";
@@ -8,12 +8,13 @@ import { EntityLoadFromStorageFailed } from "./entity-load-from-storage-failed";
 import { EntityLoadFromStorageSucceeded } from "./entity-load-from-storage-succeeded";
 
 export class EntityLoading implements IEntityState {
-    private constructor(public entityFactory: EntityStateFactory) { }
 
-    static async set(entityFactory: EntityStateFactory): Promise<void> {
-        const entityLoading = new EntityLoading(entityFactory);
-        entityFactory.state$.next(entityLoading);
-        void entityLoading.loadFromStorage(entityFactory.indexDBService)
+    private constructor(public entityStateFactory: EntityStateFactory) { }
+
+    static async set(entityStateFactory: EntityStateFactory): Promise<void> {
+        const entityLoading = new EntityLoading(entityStateFactory);
+        entityStateFactory.state$.next(entityLoading);
+        void entityLoading.loadFromStorage(entityStateFactory.indexDBService)
     }
 
     async match(matcher: IEntityResult): Promise<void> {
@@ -21,16 +22,14 @@ export class EntityLoading implements IEntityState {
     }
 
     async loadFromStorage(indexBDService: NgxIndexedDBService): Promise<void> {
-        await lastValueFrom(timer(5000));
-
         let entityProps: IEntity | undefined = undefined;
         try {
             entityProps = await lastValueFrom(indexBDService.getByKey('entities', '1'));
-        } catch (error: any) { }
+        } catch (error: unknown) { }
 
         if (entityProps)
-            await EntityLoadFromStorageSucceeded.set(this.entityFactory, entityProps);
+            await EntityLoadFromStorageSucceeded.set(this.entityStateFactory, entityProps);
         else
-            await EntityLoadFromStorageFailed.set(this.entityFactory);
+            await EntityLoadFromStorageFailed.set(this.entityStateFactory);
     };
 }

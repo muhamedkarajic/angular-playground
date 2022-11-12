@@ -6,7 +6,7 @@ import { ngxIndexedDbConfig } from './ngx-indexed-db-config.config';
 
 @Injectable()
 class MyNgxIndexedDBService extends NgxIndexedDBService implements NgxIndexedDBService {
-  constructor(@Inject(CONFIG_TOKEN) dbConfig: DBConfig, @Inject(PLATFORM_ID) platformId: any) {
+  constructor(@Inject(CONFIG_TOKEN) dbConfig: DBConfig, @Inject(PLATFORM_ID) platformId: unknown) {
     super(dbConfig, platformId);
   }
 }

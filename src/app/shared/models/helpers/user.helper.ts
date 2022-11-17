@@ -43,7 +43,7 @@ export async function validateUsernameNotEmpty(input: User | IsLoading): Promise
     return Result.ok(input);
 }
 
-export function validateUsernameHasValidChars(input: User | IsLoading): Result<User | IsLoading, UserValidationError | UserError> {
+export function validateUsernameHasValidChars(input: User | IsLoading): Result<User | IsLoading, UserValidationError> {
     if (input instanceof IsLoading)
         return IsLoading.get();
 

@@ -1,5 +1,7 @@
 import { Result } from "true-myth";
 
+export type IsLoading_v2 = 'LOADING';
+
 let isLoading!: IsLoading;
 let isLoadingResult!: Result<IsLoading, never>;
 

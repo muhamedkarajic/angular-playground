@@ -1,79 +1,20 @@
-import { lastValueFrom, map, Observable, of, OperatorFunction, pipe, switchMap, timer } from "rxjs";
+import { lastValueFrom, Observable, of, OperatorFunction, pipe, switchMap, timer } from "rxjs";
 
 export type Success<T> = { tag: 'success', value: T };
 export type Failure<S> = { tag: 'failure', value: S };
-export type Loadingx = { tag: 'loading' };
-export type Loading = 'LOADING';
-export type Result<T, S> = Success<T> | Failure<S> | Loadingx;
+export type Loading = { tag: 'loading' };
+export type Result<T, S> = Success<T> | Failure<S> | Loading;
 
 export class ResultFactory {
-  static create<S>(result: Failure<S>): Observable<Result<never, S>>
-  static create<T>(result: Success<T>): Observable<Result<T, never>>
-  static create<T = never, S = never>(result: Result<T, S>): Observable<Result<T, S>> {
+  static create<TError>(result: Loading): Observable<Result<never, never>>
+  static create<TError>(result: Failure<TError>): Observable<Result<never, TError>>
+  static create<TInput>(result: Success<TInput>): Observable<Result<TInput, never>>
+  static create<TInput, TError>(result: Result<TInput, TError>): Observable<Result<TInput, TError>> {
     return of(result);
   }
 }
 
-const switchMapChainer = <I, O, E>(f: (a: I) => Promise<Result<O, E>>) =>
-  <F>(result: Result<I, F>): Observable<Result<O, E | F>> | Promise<Result<O, E | F>> => {
-    if (result.tag === 'loading')
-      return of(result);
-    else if (result.tag === 'failure') {
-      return of(result as unknown as Failure<E | F>);
-    }
-    return f(result.value);
-  };
-
-export function map_old$<TInput, TOutput, TInputError, TOutputError>(
-  myFunction: (input: TInput) => Result<TOutput, TOutputError>
-): OperatorFunction<Result<TInput, TInputError>, Result<TOutput, TOutputError | TInputError>> {
-  return pipe(
-    map(input => {
-      switch (input.tag) {
-        case 'loading':
-          return input;
-        case 'failure':
-          return input;
-        default:
-          return myFunction(input.value);
-      }
-    })
-  );
-}
-
-export function switchMap$<TInput, TOutput, TInputError, TOutputError>(
-  myFunction: (input: TInput) => Promise<Result<TOutput, TOutputError>>
-): OperatorFunction<Result<TInput, TInputError>, Result<TOutput, TOutputError | TInputError>> {
-  return pipe(
-    switchMap(input => {
-      const myChainedFunction = switchMapChainer(myFunction)
-      const result = myChainedFunction(input);
-      return result;
-    })
-  );
-}
-
-
-export class Foo {
-  static map$<TInput, TInputError, TOutput, TOutputError>(
-    myFunction: (input: TInput) => Result<TOutput, TOutputError> | Promise<Result<TOutput, TOutputError>>
-  ): OperatorFunction<Result<TInput, TInputError>, Result<TOutput, TOutputError | TInputError>> {
-    return pipe(
-      switchMap(input => {
-        switch (input.tag) {
-          case 'loading':
-            return of(input);
-          case 'failure':
-            return of(input);
-          default:
-            return Promise.resolve(myFunction(input.value))
-        }
-      })
-    )
-  }
-}
-
-export function map$<TInput, TOutput, TOutputError, TInputError>(
+export function map$<TInput, TInputError, TOutput, TOutputError>(
   myFunction: (input: TInput) => Result<TOutput, TOutputError> | Promise<Result<TOutput, TOutputError>>
 ): OperatorFunction<Result<TInput, TInputError>, Result<TOutput, TOutputError | TInputError>> {
   return pipe(
@@ -87,19 +28,8 @@ export function map$<TInput, TOutput, TOutputError, TInputError>(
           return Promise.resolve(myFunction(input.value))
       }
     })
-  );
+  )
 }
-
-
-
-const tee = <T, E>(f: (a: unknown) => Result<T, E>) =>
-  (result: Result<T, E>): Result<T, E> => {
-    if (result.tag !== 'loading' && result.tag === 'success')
-      f(result.value);
-    return result;
-  };
-
-export type FailedType = true;
 
 export const validate = (input: unknown): Result<number, 'NOT_AN_INTEGER'> => {
   if (Number.isInteger(input))
@@ -153,8 +83,3 @@ export const validate4Async = async (input: boolean): Promise<Result<string, 'NO
     value: 'Hello World'
   }
 };
-
-
-const log = (input: unknown): void => {
-  console.log(input);
-}

@@ -1,13 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { BehaviorSubject, combineLatest, from, take } from 'rxjs';
-import { Result } from 'true-myth';
-import { interpret } from 'xstate';
-import { mapLoading$, switchMapLoading$ } from './shared/models/helpers/true-myth-loading.helper';
-import { printError, printSavedUser, saveUser, UserError, validateUsernameHasValidChars, validateUsernameNotEmpty } from './shared/models/helpers/user.helper';
-import { User } from './shared/models/user.model';
-import { IsLoading } from './shared/types/loading.type';
-import { machine } from './test.state';
+import { Foo, ResultFactory, Success, validate, validate2, validate3, validate4Async } from './shared/models/helpers/railway-programming-with-loading-obs.helper';
 
 @Component({
   selector: 'my-root',
@@ -20,31 +13,31 @@ export class RootComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    let date: Date = new Date();
+    // let date: Date = new Date();
 
-    const user$ = new BehaviorSubject(IsLoading.get<User | IsLoading, UserError>());
+    // const user$ = new BehaviorSubject(IsLoading.get<User | IsLoading, UserError>());
 
-    user$.pipe(
-      switchMapLoading$(validateUsernameNotEmpty),
-      mapLoading$(validateUsernameHasValidChars),
-      switchMapLoading$(saveUser)
-    ).subscribe(result => {
-      result.match({
-        Ok: userOrLoading => userOrLoading instanceof IsLoading ? console.log('user is still loading..') : printSavedUser(userOrLoading),
-        Err: error => printError(error),
-      });
-      console.log((new Date().getTime() - date.getTime()) * 0.001 + 'ms');
-    });
+    // user$.pipe(
+    //   switchMapLoading$(validateUsernameNotEmpty),
+    //   mapLoading$(validateUsernameHasValidChars),
+    //   switchMapLoading$(saveUser)
+    // ).subscribe(result => {
+    //   result.match({
+    //     Ok: userOrLoading => userOrLoading instanceof IsLoading ? console.log('user is still loading..') : printSavedUser(userOrLoading),
+    //     Err: error => printError(error),
+    //   });
+    //   console.log((new Date().getTime() - date.getTime()) * 0.001 + 'ms');
+    // });
 
-    combineLatest([user$.pipe(take(1))]).subscribe(([result]) => {
-      console.log('after combinedLatest')
-      const user = new User('muhamedkarajic', 'Muhamed', 'Karajic');
+    // combineLatest([user$.pipe(take(1))]).subscribe(([result]) => {
+    //   console.log('after combinedLatest')
+    //   const user = new User('muhamedkarajic', 'Muhamed', 'Karajic');
 
-      result.match({
-        Ok: userOrLoading => userOrLoading instanceof IsLoading ? user$.next(Result.ok(user)) : undefined,
-        Err: error => printError(error),
-      })
-    })
+    //   result.match({
+    //     Ok: userOrLoading => userOrLoading instanceof IsLoading ? user$.next(Result.ok(user)) : undefined,
+    //     Err: error => printError(error),
+    //   })
+    // })
 
     // const entityClient = new EntityClient();
 
@@ -58,15 +51,30 @@ export class RootComponent implements OnInit {
 
     // await entityLoadFromServerSucceeded.lock();
 
-    const service = interpret(machine).start();
+    // const service = interpret(machine).start();
 
-    const state$ = from(service);
-    state$.subscribe((state) => {
-      console.log(state.value);
+    // const state$ = from(service);
+    // state$.subscribe((state) => {
+    //   console.log(state.value);
+    // });
+
+    // service.send('TOGGLE');
+    // service.send('BREAK');
+
+    const y: Success<number> = {
+      tag: 'success',
+      value: 1
+    };
+
+    ResultFactory.create(y).pipe(
+      Foo.map$(validate),
+      Foo.map$(validate2),
+      Foo.map$(validate3),
+      Foo.map$(validate4Async),
+    ).subscribe(x => {
+      console.log(x);
     });
 
-    service.send('TOGGLE');
-    service.send('BREAK');
   }
 }
 

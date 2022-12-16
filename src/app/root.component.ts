@@ -1,38 +1,33 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { catchError, lastValueFrom, of, take } from 'rxjs';
 import { MyNgxIndexedDBService } from './core/core.module';
-import { map$, ResultFactory, Success, validate, validate2, validate3, validate4Async } from './shared/models/helpers/railway-programming-with-loading-obs.helper';
 
 @Component({
   selector: 'my-root',
   templateUrl: './root.component.html'
 })
 export class RootComponent implements OnInit {
-  private ngxIndexedDBService: MyNgxIndexedDBService = inject(NgxIndexedDBService) as MyNgxIndexedDBService;
-
-
+  private ngxIndexedDBService = inject(NgxIndexedDBService) as MyNgxIndexedDBService;
 
   async ngOnInit(): Promise<void> {
+    // of(undefined).subscribe(async () => {
+    //   const storeName = 'entities2';
 
-    of(undefined).subscribe(async () => {
-      const storeName = 'entities2';
+    //   const x = await lastValueFrom(this.ngxIndexedDBService.isStoreExisting(storeName));
 
-      const x = await lastValueFrom(this.ngxIndexedDBService.isStoreExisting(storeName));
+    //   if (!x) {
+    //     await lastValueFrom(this.ngxIndexedDBService.createObjectStore({
+    //       store: storeName,
+    //       storeConfig: { keyPath: 'id', autoIncrement: false },
+    //       storeSchema: []
+    //     }));
 
-      if (!x) {
-        await lastValueFrom(this.ngxIndexedDBService.createObjectStore({
-          store: storeName,
-          storeConfig: { keyPath: 'id', autoIncrement: false },
-          storeSchema: []
-        }));
-
-        await lastValueFrom(this.ngxIndexedDBService.update(storeName, { id: '1', name: 'hello world', version: 'random' }).pipe(take(1), catchError(x => {
-          console.error(x);
-          return of(x);
-        })))
-      }
-    })
+    //     await lastValueFrom(this.ngxIndexedDBService.update(storeName, { id: '1', name: 'hello world', version: 'random' }).pipe(take(1), catchError(x => {
+    //       console.error(x);
+    //       return of(x);
+    //     })))
+    //   }
+    // })
 
     // var db_object, object_store;
     // if (!x.contains(currentobjectstore)) {
@@ -45,19 +40,20 @@ export class RootComponent implements OnInit {
 
     // console.log(x);
     // console.log('ngxIndexedDBService', databases);
-    const y: Success<number> = {
-      tag: 'success',
-      value: 1
-    };
 
-    ResultFactory.create(y).pipe(
-      map$(validate),
-      map$(validate2),
-      map$(validate3),
-      map$(validate4Async),
-    ).subscribe(x => {
-      console.log(x);
-    });
+    // const y: Success<number> = {
+    //   tag: 'success',
+    //   value: 1
+    // };
+
+    // ResultFactory.create(y).pipe(
+    //   map$(validate),
+    //   map$(validate2),
+    //   map$(validate3),
+    //   map$(validate4Async),
+    // ).subscribe(x => {
+    //   console.log(x);
+    // });
   }
 }
 

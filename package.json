@@ -6,11 +6,12 @@
     "build": "ng build",
     "start": "node server.js",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test --browsers ChromeHeadless",
     "buildAsProduction": "ng build --configuration production",
     "startAsProduction": "ng serve --configuration production",
     "buildAsProductionWithSourceMaps": "npm run build -- --configuration production --source-map=true",
-    "serve": "ng serve --hmr --port 4201"
+    "test": "ng test --browsers ChromeHeadless",
+    "web": "ng serve --hmr --port 4201",
+    "serve": "concurrently \"npm run web\" \"npm run test\""
   },
   "private": true,
   "dependencies": {
@@ -22,6 +23,7 @@
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
     "@ngneat/until-destroy": "^9.2.1",
+    "concurrently": "^7.6.0",
     "express": "^4.18.1",
     "fp-ts": "^2.13.1",
     "ngx-indexed-db": "^11.0.2",

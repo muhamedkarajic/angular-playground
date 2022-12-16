@@ -5,19 +5,17 @@ import { SharedModule } from '../shared/shared.module';
 import { LazySubComponent } from './lazy-sub/lazy-sub.component';
 import { LazyComponent } from './lazy.component';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: LazyComponent,
-    outlet: 'test',
-    children: [
-      {
-        path: 'lazy-component',
-        component: LazySubComponent
-      }
-    ]
-  }
-];
+const routes: Routes = [{
+  path: '',
+  component: LazyComponent,
+  outlet: 'test',
+  children: [
+    {
+      path: 'lazy-component',
+      component: LazySubComponent
+    }
+  ]
+}];
 
 @NgModule({
   imports: [

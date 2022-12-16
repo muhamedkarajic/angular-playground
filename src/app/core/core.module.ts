@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Inject, Injectable, NgModule, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, NgModule, PLATFORM_ID } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CONFIG_TOKEN, DBConfig, NgxIndexedDBModule, NgxIndexedDBService, ObjectStoreMeta, ObjectStoreSchema } from 'ngx-indexed-db';
 import { map, Observable, of, ReplaySubject, take } from 'rxjs';
@@ -57,8 +57,8 @@ export class MyNgxIndexedDBService extends NgxIndexedDBService implements NgxInd
   _indexedDB: IDBFactory = this['indexedDB']!;
   _dbConfig: DBConfig = this['dbConfig']!;
 
-  constructor(@Inject(CONFIG_TOKEN) dbConfig: DBConfig, @Inject(PLATFORM_ID) platformId: unknown) {
-    super(dbConfig, platformId);
+  constructor() {
+    super(inject<DBConfig>(CONFIG_TOKEN), inject<unknown>(PLATFORM_ID));
   }
 
   isStoreExisting(storeName: string): Observable<boolean> {

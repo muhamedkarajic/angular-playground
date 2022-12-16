@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, EventEmitter, OnDestroy, Pipe, PipeTransform, ɵisPromise } from '@angular/core';
-import { combineLatest, map, Observable, of, Subscribable, Unsubscribable, from, isObservable } from 'rxjs';
+import { ChangeDetectorRef, EventEmitter, inject, OnDestroy, Pipe, PipeTransform, ɵisPromise } from '@angular/core';
+import { combineLatest, from, isObservable, map, Observable, of, Subscribable, Unsubscribable } from 'rxjs';
 
 interface SubscriptionStrategy<T> {
     createSubscription(async: Subscribable<ObjectProps<T>> | Promise<ObjectProps<T>>, updateLatestValue: any): Unsubscribable
@@ -61,26 +61,13 @@ class Cache<T> {
     pure: false
 })
 export class AwaitPipe implements OnDestroy, PipeTransform {
-    private _ref: ChangeDetectorRef | null;
-
+    private ref: ChangeDetectorRef | null = inject(ChangeDetectorRef);
     private observable: Observable<ObjectProps<any>> | null = null;
     private subscription: Unsubscribable | Promise<ObjectProps<any>> | null = null;
     private strategy: SubscriptionStrategy<any> | null = null;
     private latestValue: ObjectProps<any> | null = null;
     private observables: (Subscribable<any> | Promise<any> | EventEmitter<any>)[] | null = null;
-
-    constructor(ref: ChangeDetectorRef) {
-        this._ref = ref;
-    }
-
-    ngOnDestroy(): void {
-        if (this.subscription) {
-            this._dispose();
-        }
-        this._ref = null;
-    }
-
-    cache = new Cache<any>();
+    private cache = new Cache<any>();
 
     transform<T>(objWithObservableProps: ObservableProps<T>): ObjectProps<T> | null {
         if (this.cache.objWithObservableProps != objWithObservableProps) {
@@ -178,7 +165,13 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
     private _updateLatestValue_<T>(async: Observable<ObjectProps<T>>, value: ObjectProps<T>): void {
         if (this.observable == async) {
             this.latestValue = value;
-            this._ref!.markForCheck();
+            this.ref!.markForCheck();
         }
+    }
+
+    ngOnDestroy(): void {
+        if (this.subscription)
+            this._dispose();
+        this.ref = null;
     }
 }

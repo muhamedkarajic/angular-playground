@@ -1,10 +1,8 @@
 import {
-    Directive,
-    ElementRef,
-    Input,
+    ComponentRef, Directive,
+    ElementRef, inject, Input,
     OnDestroy,
-    ViewContainerRef,
-    ComponentRef,
+    ViewContainerRef
 } from '@angular/core';
 
 import { CalloutComponent } from './my-tooltip.component';
@@ -21,18 +19,10 @@ class Point {
     }
 })
 export class CalloutDirective implements OnDestroy {
+    private elementRef = inject(ElementRef);
+    private viewContainer = inject(ViewContainerRef);
     @Input() myCallout: String = '';
-
     private calloutRef: ComponentRef<CalloutComponent> | null = null;
-
-    constructor(
-        private elementRef: ElementRef,
-        private viewContainer: ViewContainerRef
-    ) {}
-
-    ngOnDestroy() {
-        this.hideCallout();
-    }
 
     showCallout() {
         this.calloutRef = this.createCallout(this.myCallout);
@@ -61,5 +51,9 @@ export class CalloutDirective implements OnDestroy {
     private getTargetCalloutLocation(): Point {
         let box = this.elementRef.nativeElement.getBoundingClientRect();
         return new Point(box.left + box.width / 2, box.bottom + 5);
+    }
+
+    ngOnDestroy() {
+        this.hideCallout();
     }
 }

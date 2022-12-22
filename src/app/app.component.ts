@@ -1,17 +1,17 @@
 import { Component } from '@angular/core';
-import { IDataInputs, IEagerComponentInputs } from './eager/eager.component';
+import { ReplaySubject } from 'rxjs';
 
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  x: IDataInputs<IEagerComponentInputs> = {
-    prop1: {
-      defaultValue: 'Hello World'
-    },
-    prop2: {
-      type: 1
-    }
+  number$ = new ReplaySubject<number>(1);
+
+  constructor() {
+    setTimeout(() => {
+      this.number$.next(1000);
+    }, 2_000);
   }
+
 }

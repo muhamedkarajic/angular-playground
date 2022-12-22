@@ -1,10 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-
-export interface IEagerComponentInputs {
-  prop1: string,
-  prop2: number
-}
 
 export type IDataInputs$<T> = {
   [K in keyof T]: Subject<T[K]>;
@@ -12,14 +7,19 @@ export type IDataInputs$<T> = {
 
 export type IDataInputs<T> = {
   [K in keyof T]: {
-    value?: T[K],
+    value?: T[K] | null | undefined,
     defaultValue?: T[K],
     type?: T[K] | undefined // For errors in HTML.
   } | undefined | null
 };
 
-export interface IData<T> {
+export interface IData<T extends Record<string, unknown>> extends OnInit {
   data: IDataInputs$<T>
+}
+
+export interface IEagerComponentInputs extends Record<string, unknown> {
+  prop1: string,
+  prop2: number,
 }
 
 @Component({
@@ -29,8 +29,15 @@ export interface IData<T> {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EagerComponent implements IData<IEagerComponentInputs> {
+  _data!: IDataInputs$<IEagerComponentInputs>;
+
   @Input() set data(data: IDataInputs$<IEagerComponentInputs>) {
-    data.prop2.subscribe(console.log);
-    data.prop1.subscribe(console.log);
+    if (data)
+      this._data = data;
+  }
+
+  ngOnInit(): void {
+    this._data.prop1.subscribe(console.log);
+    this._data.prop2.subscribe(console.log);
   }
 }

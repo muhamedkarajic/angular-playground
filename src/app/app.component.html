@@ -1,10 +1,9 @@
 <eager [data]="{
-  
   prop1: {
-    defaultValue: 'Hello World'
+    defaultValue: 'x',
+    value: (value$ | async)!
   },
   prop2: {
-    value: (number$ | async)!,
-    defaultValue: 1
+    value: (number$ | async)!
   }
-} | dataInput: 't-e-s-t'"></eager>
+} | input: 't-e-s-t'"></eager>

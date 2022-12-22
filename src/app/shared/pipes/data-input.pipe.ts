@@ -1,52 +1,75 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
-import { IDataInputs, IDataInputs$ } from 'src/app/eager/eager.component';
 import { nameof } from '../models/helpers/nameof.helper';
+
+export type IDataInputs$<T> = {
+  [K in keyof T]: Subject<T[K]>;
+};
+
+export type IDataInputs<T> = {
+  [K in keyof T]: {
+    value?: T[K] | null | undefined,
+    defaultValue?: T[K],
+    type?: T[K] | undefined // For errors in HTML.
+  } | undefined | null
+};
+
+export interface IData<T extends Record<string, unknown>> {
+  data: IDataInputs$<T>
+}
 
 export type IDataInputsOptional$<T> = {
   [K in keyof T]?: Subject<T[K]>;
 };
 
-const obs: Record<string, Record<string, Subject<unknown>> | undefined> = {
-
-}
+const dataInputObsPropsByPipeUUID: Record<string, Record<string, Subject<unknown>> | undefined> = {}
 
 @Pipe({
-  name: 'dataInput'
+  name: 'input'
 })
-export class DataInputPipe implements PipeTransform {
+export class InputPipe implements PipeTransform {
   transform<T>(objProps: IDataInputs<T>, uuid: string): IDataInputs$<T> {
     const _objProps = objProps as Record<string, { value?: unknown, defaultValue?: unknown } | undefined>;
-    const response: Record<string, unknown> = {};
+    const dataInputObsProps = dataInputObsPropsByPipeUUID[uuid];
 
-    const objProps$ = obs[uuid];
-    if (!objProps$) {
+    if (!dataInputObsProps) { // creates the obj with observable props
+      const newDataInputObsProps: Record<string, unknown> = {};
       for (const [_key, _value] of Object.entries(_objProps)) {
         if (!_value) {
-          response[_key] = new ReplaySubject<any>(1);
+          newDataInputObsProps[_key] = new ReplaySubject<any>(1);
         }
-        else if (_value.hasOwnProperty(nameof<{ value?: unknown, defaultValue?: unknown }>('value'))) {
-          response[_key] = new BehaviorSubject<any>(_value.value);
+        else if (_value.hasOwnProperty(nameof<{ value?: unknown, defaultValue?: unknown }>('value')) && _value.value !== null) {
+          newDataInputObsProps[_key] = new BehaviorSubject<any>(_value.value);
+          (newDataInputObsProps[_key] as any).cachedValue = _value.value;
         }
         else if (_value.hasOwnProperty(nameof<{ value?: unknown, defaultValue?: unknown }>('defaultValue'))) {
-          response[_key] = new BehaviorSubject<any>(_value.defaultValue);
+          newDataInputObsProps[_key] = new BehaviorSubject<any>(_value.defaultValue);
+          (newDataInputObsProps[_key] as any).cachedValue = _value.defaultValue;
         }
         else {
-          response[_key] = new ReplaySubject<any>(1);
+          newDataInputObsProps[_key] = new ReplaySubject<any>(1);
         }
       }
 
-      obs[uuid] = response as Record<string, Subject<unknown>>;
+      dataInputObsPropsByPipeUUID[uuid] = newDataInputObsProps as Record<string, Subject<unknown>>;
 
-      return response as IDataInputs$<T>;
+      return newDataInputObsProps as IDataInputs$<T>;
     }
 
-    for (const [_key, _value] of Object.entries(_objProps)) {
-      if (_value?.hasOwnProperty(nameof<{ value?: unknown, defaultValue?: unknown }>('value'))) {
-        objProps$[_key].next(_value.value);
+    for (const [_key, _value] of Object.entries(_objProps)) { // calls next on observables
+      if (_value?.hasOwnProperty(nameof<{ value?: unknown, defaultValue?: unknown }>('value')) && _value.value !== null) {
+        if (dataInputObsProps[_key].hasOwnProperty('cachedValue') && (dataInputObsProps[_key] as any).cachedValue === _value.value)
+          continue;
+
+        (dataInputObsProps[_key] as any).cachedValue = _value.value;
+        dataInputObsProps[_key].next(_value.value);
       }
       else if (_value?.hasOwnProperty(nameof<{ value?: unknown, defaultValue?: unknown }>('defaultValue'))) {
-        objProps$[_key].next(_value.defaultValue);
+        if (dataInputObsProps[_key].hasOwnProperty('cachedValue') && (dataInputObsProps[_key] as any).cachedValue === _value.defaultValue)
+          continue;
+
+        (dataInputObsProps[_key] as any).cachedValue = _value.defaultValue;
+        dataInputObsProps[_key].next(_value.defaultValue);
       }
     }
     return null as unknown as IDataInputs$<T>;

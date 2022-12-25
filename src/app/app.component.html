@@ -1,9 +1,4 @@
 <eager [data]="{
-  prop1: {
-    defaultValue: 'x',
-    value: (value$ | async)!
-  },
-  prop2: {
-    value: (number$ | async)!
-  }
+  prop1: (value$ | async)! || 'LOADING',
+  prop2: (number$ | async)! || 'LOADING'
 } | input"></eager>

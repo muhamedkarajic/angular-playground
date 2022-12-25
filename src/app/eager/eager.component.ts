@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { MyInputs } from '../shared/decorators/my-inputs.decorator';
 import { IData, IDataInputs$ } from '../shared/pipes/data-input.pipe';
 
-export interface IEagerComponentInputs extends Record<string, unknown> {
+export interface IEagerComponentInputs extends Record<string, any> {
   prop1: string,
   prop2: number,
 }
@@ -13,22 +13,12 @@ export interface IEagerComponentInputs extends Record<string, unknown> {
   styleUrls: ['./eager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+@MyInputs()
 export class EagerComponent implements IData<IEagerComponentInputs>, OnInit {
-  props = {
-    prop1: new BehaviorSubject<string>('hello world'),
-    prop2: new BehaviorSubject<number>(2)
-  } as IDataInputs$<IEagerComponentInputs>;
-
-  @Input() set data(data: IDataInputs$<IEagerComponentInputs>) {
-    if (data) {
-      for (const [_key, _value] of Object.entries(data)) {
-        _value.subscribe(this.props[_key]);
-      }
-    }
-  }
+  @Input() data!: IDataInputs$<IEagerComponentInputs>;
 
   ngOnInit(): void {
-    this.props.prop1.subscribe(console.log);
-    this.props.prop2.subscribe(console.log);
+    this.data.prop1.subscribe(console.log);
+    this.data.prop2.subscribe(console.log);
   }
 }

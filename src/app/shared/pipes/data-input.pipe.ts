@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import { v4 } from 'uuid';
 import { nameof } from '../models/helpers/nameof.helper';
 
 export type IDataInputs$<T> = {
@@ -23,14 +24,15 @@ export type IDataInputsOptional$<T> = {
 };
 
 const dataInputObsPropsByPipeUUID: Record<string, Record<string, Subject<unknown>> | undefined> = {}
-
 @Pipe({
   name: 'input'
 })
 export class InputPipe implements PipeTransform {
-  transform<T>(objProps: IDataInputs<T>, uuid: string): IDataInputs$<T> {
+  uuid = v4();
+
+  transform<T>(objProps: IDataInputs<T>): IDataInputs$<T> {
     const _objProps = objProps as Record<string, { value?: unknown, defaultValue?: unknown } | undefined>;
-    const dataInputObsProps = dataInputObsPropsByPipeUUID[uuid];
+    const dataInputObsProps = dataInputObsPropsByPipeUUID[this.uuid];
 
     if (!dataInputObsProps) { // creates the obj with observable props
       const newDataInputObsProps: Record<string, unknown> = {};
@@ -51,7 +53,7 @@ export class InputPipe implements PipeTransform {
         }
       }
 
-      dataInputObsPropsByPipeUUID[uuid] = newDataInputObsProps as Record<string, Subject<unknown>>;
+      dataInputObsPropsByPipeUUID[this.uuid] = newDataInputObsProps as Record<string, Subject<unknown>>;
 
       return newDataInputObsProps as IDataInputs$<T>;
     }

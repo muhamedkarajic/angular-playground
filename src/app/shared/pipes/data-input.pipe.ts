@@ -7,11 +7,13 @@ export type IDataInputsFull$<T> = {
 };
 
 export type IDataInputs$<T> = {
-  [K in keyof T]: Subject<T[K]>;
+  [K in keyof T]?: Subject<T[K] | undefined>;
 };
 
 export type IDataInputs<T> = {
-  [K in keyof T]: T[K] | 'LOADING'
+  [K in keyof T]?: {
+    value: T[K] | 'LOADING',
+  }
 };
 
 export interface IData<T extends Record<string, any>> {
@@ -30,7 +32,7 @@ export class InputPipe implements PipeTransform {
   uuid = v4();
 
   transform<T>(objProps: IDataInputs<T>): IDataInputs$<T> {
-    const _objProps = objProps as Record<string, any | 'LOADING'>;
+    const _objProps = objProps as Record<string, { value: any | 'LOADING' }>;
     const dataInputObsProps = dataInputObsPropsByPipeUUID[this.uuid];
 
     if (!dataInputObsProps) { // creates the obj with observable props
@@ -39,9 +41,9 @@ export class InputPipe implements PipeTransform {
         if (!_value) {
           newDataInputObsProps[_key] = new ReplaySubject<any>(1);
         }
-        else if (_value !== 'LOADING') {
-          newDataInputObsProps[_key] = new BehaviorSubject<any>(_value);
-          (newDataInputObsProps[_key] as any).cachedValue = _value;
+        else if (_value.value !== 'LOADING') {
+          newDataInputObsProps[_key] = new BehaviorSubject<any>(_value.value);
+          (newDataInputObsProps[_key] as any).cachedValue = _value.value;
         }
         else {
           newDataInputObsProps[_key] = new ReplaySubject<any>(1);
@@ -54,7 +56,7 @@ export class InputPipe implements PipeTransform {
     }
 
     for (const [_key, _value] of Object.entries(_objProps)) { // calls next on observables
-      if (_value !== 'LOADING') {
+      if (_value.value !== 'LOADING') {
         if (dataInputObsProps[_key].hasOwnProperty('cachedValue') && (dataInputObsProps[_key] as any).cachedValue === _value)
           continue;
 

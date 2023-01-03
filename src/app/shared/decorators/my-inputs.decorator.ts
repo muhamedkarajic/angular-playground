@@ -19,21 +19,11 @@ function decorateProviderDirectiveOrComponentWithOnInit<T>(
     configurable: true,
     set: function (data) {
       if (data) {
-        if (!this.data) {
-          Object.defineProperty(type.prototype, 'data', {
-            configurable: true,
-            get: function () {
-              return data;
-            }
-          });
-        }
-        else {
-          for (const [_key, _value] of Object.entries(data)) {
-            if (!this.data[_key]) {
-              this.data[_key] = new ReplaySubject<any>(1);
-            }
-            (_value as Observable<unknown>).subscribe(this.data[_key]);
+        for (const [_key, _value] of Object.entries(data)) {
+          if (!this.props$[_key]) {
+            this.props$[_key] = new ReplaySubject<any>(1);
           }
+          (_value as Observable<unknown>).subscribe(this.props$[_key]);
         }
       }
     }

@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { ElementRef, Pipe, PipeTransform } from '@angular/core';
 import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 import { v4 } from 'uuid';
 
@@ -6,7 +6,7 @@ export type IDataInputsFull$<T> = {
   [K in keyof T]-?: Subject<T[K]>;
 };
 
-export type IDataInputs$<T> = {
+export type IDataOptionalInputs$<T> = {
   [K in keyof T]?: Subject<T[K] | undefined>;
 };
 
@@ -16,8 +16,8 @@ export type IDataInputs<T> = {
   }
 };
 
-export interface IData<T extends Record<string, any>> {
-  data: IDataInputs$<T>
+export interface IOptionalData<T extends Record<string, any>> {
+  optionalData: IDataOptionalInputs$<T>
 }
 
 export type IDataInputsOptional$<T> = {
@@ -26,12 +26,18 @@ export type IDataInputsOptional$<T> = {
 
 const dataInputObsPropsByPipeUUID: Record<string, Record<string, Subject<any>> | undefined> = {}
 @Pipe({
-  name: 'input'
+  name: 'optionalInput'
 })
-export class InputPipe implements PipeTransform {
+export class OptionalInputPipe implements PipeTransform {
+
   uuid = v4();
 
-  transform<T>(objProps: IDataInputs<T>): IDataInputs$<T> {
+  constructor(public readonly elementRef: ElementRef) {
+    console.log('elementRef', elementRef.nativeElement);
+  }
+
+
+  transform<T>(objProps: IDataInputs<T>): IDataOptionalInputs$<T> {
     const _objProps = objProps as Record<string, { value: any | 'LOADING' }>;
     const dataInputObsProps = dataInputObsPropsByPipeUUID[this.uuid];
 
@@ -52,7 +58,7 @@ export class InputPipe implements PipeTransform {
 
       dataInputObsPropsByPipeUUID[this.uuid] = newDataInputObsProps as Record<string, Subject<any>>;
 
-      return newDataInputObsProps as IDataInputs$<T>;
+      return newDataInputObsProps as IDataOptionalInputs$<T>;
     }
 
     for (const [_key, _value] of Object.entries(_objProps)) { // calls next on observables
@@ -64,6 +70,6 @@ export class InputPipe implements PipeTransform {
         dataInputObsProps[_key].next(_value);
       }
     }
-    return null as any as IDataInputs$<T>;
+    return null as any as IDataOptionalInputs$<T>;
   }
 }

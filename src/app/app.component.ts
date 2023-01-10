@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
-import { IEagerComponentInputs } from './eager/eager.component';
-import { IDataInputs$ } from './shared/pipes/data-input.pipe';
+import { IEagerComponentInputs1 } from './eager/eager.component_old';
+import { IDataOptionalInputs$ } from './shared/pipes/optional-data-input.pipe';
 
 @Component({
   selector: 'my-app',
@@ -12,8 +12,8 @@ export class AppComponent {
   value$ = new ReplaySubject<string>(1);
   number$ = new ReplaySubject<number>(1);
 
-  type1!: IDataInputs$<IEagerComponentInputs>;
-  type2!: IDataInputs$<{ prop1: string; prop2: number; }>;
+  type1!: IDataOptionalInputs$<IEagerComponentInputs1>;
+  type2!: IDataOptionalInputs$<{ prop1: string; prop2: number; }>;
 
   constructor() {
 

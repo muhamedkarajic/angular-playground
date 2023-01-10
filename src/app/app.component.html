@@ -1,8 +1,2 @@
-<eager [data]="{
-  prop1: {
-    value: (value$ | async)! || 'LOADING'
-  },
-  prop2: {
-    value: (number$ | async)! || 'LOADING'
-  }
-} | input"></eager>
+<eager *ngIf="{ value$, number$ } | await as props" [test2]="props.number$.value"></eager>
+<!-- NOT SETTING TEST1 prop -->

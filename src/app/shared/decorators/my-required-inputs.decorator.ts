@@ -15,21 +15,21 @@ function decorateProviderDirectiveOrComponentWithOnInit<T>(
 ): void {
   type.prototype.ngOnInit = decorateNgOnInit(type.prototype.ngOnInit);
 
-  Object.defineProperty(type.prototype, 'optionalData', {
+  Object.defineProperty(type.prototype, 'requiredData', {
     configurable: true,
     set: function (data) {
       if (data) {
         for (const [_key, _value] of Object.entries(data)) {
-          if (!this.optionalProps$[_key]) {
-            this.optionalProps$[_key] = new ReplaySubject<any>(1);
+          if (!this.requiredProps$[_key]) {
+            this.requiredProps$[_key] = new ReplaySubject<any>(1);
           }
-          (_value as Observable<unknown>).subscribe(this.optionalProps$[_key]);
+          (_value as Observable<unknown>).subscribe(this.requiredProps$[_key]);
         }
       }
     }
   });
 }
 
-export function MyInputs(): ClassDecorator {
+export function MyRequiredInputs(): ClassDecorator {
   return (type: any) => decorateProviderDirectiveOrComponentWithOnInit(type);
 }

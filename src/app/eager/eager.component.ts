@@ -1,12 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { MyInputs } from '../shared/decorators/my-inputs.decorator';
-import { IData, IDataInputs$, IDataInputsFull$ } from '../shared/pipes/data-input.pipe';
-
-export interface IEagerComponentInputs extends Record<string, any> {
-  prop1: string,
-  prop2: number,
-}
+import { ReplaySubject } from 'rxjs';
+import { SimpleInputs } from '../shared/decorators/simple-inputs.decorator';
 
 @Component({
   selector: 'eager',
@@ -14,17 +8,24 @@ export interface IEagerComponentInputs extends Record<string, any> {
   styleUrls: ['./eager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-@MyInputs()
-export class EagerComponent implements IData<IEagerComponentInputs>, OnInit {
-  @Input() data!: IDataInputs$<IEagerComponentInputs>;
+@SimpleInputs()
+export class EagerComponent implements OnInit {
+  @Input() test1: string = "Hello2 World"; // is not required cause has default input
+  test1$!: ReplaySubject<string>;
 
-  props$: IDataInputsFull$<IEagerComponentInputs> = {
-    prop1: new BehaviorSubject<string>('test'),
-    prop2: new BehaviorSubject<number>(1)
-  };
+  @Input() set test2(test2: number) {
+    if (!test2) { // will proceed
+      return;
+    }
+    this.test2$.next(test2);// will be set from parent
+  }
+  test2$!: ReplaySubject<number>;
+
+
+  @Input() test3!: number; // no one sets it will result in error
+  test3$!: ReplaySubject<number>;
 
   ngOnInit(): void {
-    this.props$.prop1.subscribe(console.log);
-    this.props$.prop2.subscribe(console.log);
+    this.test1$.subscribe(console.log);
   }
 }

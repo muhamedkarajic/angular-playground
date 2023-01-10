@@ -4,10 +4,11 @@ import { NgModule } from '@angular/core';
 import { CalloutComponent } from './directives/my-tooltip/my-tooltip.component';
 import { CalloutDirective } from './directives/my-tooltip/my-tooltip.directive';
 import { AwaitPipe } from './pipes/await.pipe';
-import { InputPipe } from './pipes/data-input.pipe';
 import { MyCastPipe } from './pipes/my-cast.pipe';
 import { MyArePropsDefinedPipe } from './pipes/my-defined-props.pipe';
 import { MyTypeofPipe } from './pipes/my-typeof.pipe';
+import { OptionalInputPipe } from './pipes/optional-data-input.pipe';
+import { RequiredInputPipe } from './pipes/required-data-input.pipe';
 import { TruncatePipe } from './pipes/truncate.pipe';
 
 @NgModule({
@@ -17,7 +18,8 @@ import { TruncatePipe } from './pipes/truncate.pipe';
         TruncatePipe,
         AwaitPipe,
         MyArePropsDefinedPipe,
-        InputPipe,
+        RequiredInputPipe,
+        OptionalInputPipe,
         CalloutComponent,
         CalloutDirective,
     ],
@@ -30,7 +32,8 @@ import { TruncatePipe } from './pipes/truncate.pipe';
         TruncatePipe,
         AwaitPipe,
         MyArePropsDefinedPipe,
-        InputPipe,
+        OptionalInputPipe,
+        RequiredInputPipe,
         CalloutComponent,
         CalloutDirective,
     ],

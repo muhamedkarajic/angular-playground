@@ -21,7 +21,6 @@ export class EagerComponent implements OnInit {
   }
   test2$!: ReplaySubject<number>;
 
-
   @Input() test3!: number; // no one sets it will result in error
   test3$!: ReplaySubject<number>;
 

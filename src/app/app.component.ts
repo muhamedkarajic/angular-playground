@@ -16,7 +16,6 @@ export class AppComponent {
   type2!: IDataOptionalInputs$<{ prop1: string; prop2: number; }>;
 
   constructor() {
-
     this.type1 = this.type2;
 
     setTimeout(() => {

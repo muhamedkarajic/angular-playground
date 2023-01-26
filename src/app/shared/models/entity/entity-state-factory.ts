@@ -1,15 +1,15 @@
 import { NgxIndexedDBService } from "ngx-indexed-db";
-import { catchError, EMPTY, lastValueFrom, Observable, ReplaySubject, take } from "rxjs";
+import { BehaviorSubject, catchError, EMPTY, lastValueFrom, Observable, take } from "rxjs";
 import { IsLoading } from "../../types/loading.type";
 import { EntityClient } from "./entity-client";
 import { IEntityState } from "./i-entity-state";
 import { EntityLoadFromServerSucceeded } from "./states/entity-load-from-server-succeeded";
 import { EntityLoadedFromServerLockRequested } from "./states/entity-loaded-from-server-lock-requested";
 import { EntityLoadedFromServerLocked } from "./states/entity-loaded-from-server-locked";
-import { EntityLoading } from "./states/entity-loading";
+import { EntityUndefined } from "./states/entity-undefined";
 
 export class EntityStateFactory {
-    readonly state$ = new ReplaySubject<IEntityState>(1);
+    readonly state$ = new BehaviorSubject<IEntityState>(new EntityUndefined(this));
 
     private constructor(public readonly id: string, public readonly entityApiHub: EntityClient, public readonly indexDBService: NgxIndexedDBService) {
         this.state$.pipe(
@@ -35,9 +35,8 @@ export class EntityStateFactory {
         });
     }
 
-    static async create(id: string, entityApiHub: EntityClient, indexDBService: NgxIndexedDBService): Promise<Observable<IEntityState | IsLoading>> {
-        const entity = new EntityStateFactory(id, entityApiHub, indexDBService);
-        EntityLoading.set(entity);
-        return entity.state$.asObservable();
+    static create(id: string, entityApiHub: EntityClient, indexDBService: NgxIndexedDBService): Observable<IEntityState | IsLoading> {
+        const entityStateFactory = new EntityStateFactory(id, entityApiHub, indexDBService);
+        return entityStateFactory.state$.asObservable();
     }
 }

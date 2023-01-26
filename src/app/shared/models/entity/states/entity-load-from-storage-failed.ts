@@ -12,7 +12,7 @@ export class EntityLoadFromStorageFailed implements IEntityState {
         void entityLoadedFromDB.requestEntityFromServer();
     }
 
-    async match(matcher: IEntityResult): Promise<void> {
+    match(matcher: IEntityResult): void {
         matcher.error?.(new Error(EntityLoadFromStorageFailed.constructor.name));
     }
 

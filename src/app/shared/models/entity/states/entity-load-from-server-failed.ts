@@ -9,11 +9,11 @@ import { EntityLoadFromServerSucceeded } from "./entity-load-from-server-succeed
 export class EntityLoadFromServerFailed implements IEntityState {
     private constructor(public entityStateFactory: EntityStateFactory) { }
 
-    async match(matcher: IEntityResult): Promise<void> {
+    match(matcher: IEntityResult): void {
         matcher.error?.(new Error(EntityLoadFromServerFailed.constructor.name));
     }
 
-    static async set(entityStateFactory: EntityStateFactory): Promise<void> {
+    static set(entityStateFactory: EntityStateFactory): void {
         const entityLoadedFromServerError = new EntityLoadFromServerFailed(entityStateFactory);
 
         entityStateFactory.state$.next(entityLoadedFromServerError);

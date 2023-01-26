@@ -18,7 +18,7 @@ export class EntityLoadedFromServerLocked implements IEntityState {
         entityFactory.state$.next(entityLoadedFromDB);
     }
 
-    async match(matcher: IEntityResult): Promise<void> {
+    match(matcher: IEntityResult): void {
         matcher.ok?.(this);
     }
 

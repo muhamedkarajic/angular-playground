@@ -8,21 +8,21 @@ import { EntityLoadedFromServerLockRequested } from "./entity-loaded-from-server
 export class EntityLoadFromStorageSucceeded implements IEntityState {
     private constructor(public entityStateFactory: EntityStateFactory, public props: IEntity) { }
 
-    static async set(entityStateFactory: EntityStateFactory, entityPayload: IEntity): Promise<void> {
+    static set(entityStateFactory: EntityStateFactory, entityPayload: IEntity): void {
         const entityLoadedFromDB = new EntityLoadFromStorageSucceeded(entityStateFactory, entityPayload);
         entityStateFactory.state$.next(entityLoadedFromDB);
-        void entityLoadedFromDB.requestFromServer();
+        entityLoadedFromDB.requestFromServer();
     }
 
-    async match(matcher: IEntityResult): Promise<void> {
+    match(matcher: IEntityResult): void {
         matcher.ok?.(this);
     }
 
-    async requestFromServer(): Promise<void> {
+    requestFromServer(): void {
         EntityStateHelper.requestFromServer(this.entityStateFactory);
     }
 
-    async lock() {
-        await EntityLoadedFromServerLockRequested.set(this.entityStateFactory, this.props);
+    lock() {
+        EntityLoadedFromServerLockRequested.set(this.entityStateFactory, this.props);
     }
 }

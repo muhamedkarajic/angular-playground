@@ -7,29 +7,25 @@ import { IEntityState } from "../i-entity-state";
 import { EntityLoadFromStorageFailed } from "./entity-load-from-storage-failed";
 import { EntityLoadFromStorageSucceeded } from "./entity-load-from-storage-succeeded";
 
-export class EntityLoading implements IEntityState {
+export class EntityUndefined implements IEntityState {
 
-    private constructor(public entityStateFactory: EntityStateFactory) { }
-
-    static async set(entityStateFactory: EntityStateFactory): Promise<void> {
-        const entityLoading = new EntityLoading(entityStateFactory);
-        entityStateFactory.state$.next(entityLoading);
-        void entityLoading.loadFromStorage(entityStateFactory.indexDBService)
+    constructor(public entityStateFactory: EntityStateFactory) {
+        void this.loadFromStorage(entityStateFactory.indexDBService);
     }
 
-    async match(matcher: IEntityResult): Promise<void> {
+    match(matcher: IEntityResult): void {
         matcher.loading?.(this);
     }
 
     async loadFromStorage(indexBDService: NgxIndexedDBService): Promise<void> {
         let entityProps: IEntity | undefined = undefined;
         try {
-            entityProps = await lastValueFrom(indexBDService.getByKey('entities', '1'));
+            entityProps = await lastValueFrom(indexBDService.getByKey('entities', this.entityStateFactory.id));
         } catch (error: unknown) { }
 
         if (entityProps)
-            await EntityLoadFromStorageSucceeded.set(this.entityStateFactory, entityProps);
+            EntityLoadFromStorageSucceeded.set(this.entityStateFactory, entityProps);
         else
-            await EntityLoadFromStorageFailed.set(this.entityStateFactory);
+            EntityLoadFromStorageFailed.set(this.entityStateFactory);
     };
 }

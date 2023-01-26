@@ -24,6 +24,8 @@ body {
   justify-content: flex-start;
   flex-direction: column;
   background-color: $background-color;
+  background-size: cover;
+  background-image: url("/assets/bg.jpg");
 }
 
 ::-webkit-scrollbar {

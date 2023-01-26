@@ -5,7 +5,7 @@ import { EagerComponent } from './eager.component';
 
 const routes: Routes = [
   {
-    path: 'eager-component',
+    path: '',
     component: EagerComponent
   }
 ];

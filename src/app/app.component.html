@@ -1,3 +1,9 @@
+test
+<button (click)="service.send({type: 'TOGGLE_ON'})">toggle on</button>
+<button (click)="service.send({type: 'TOGGLE_OFF', someValue: 0})">toggle off</button>
+<button (click)="service.send({type: 'BREAK'})">break</button>
+
+
 <router-outlet #outlet="outlet"></router-outlet>
 <!-- <div class="body">
     <div class="main">

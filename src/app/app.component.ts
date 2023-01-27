@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { interpret } from 'xstate';
+import { machine } from './machine';
 
 @Component({
   selector: 'my-app',
@@ -6,5 +8,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  constructor() { }
+  service = interpret(machine).onTransition(state => {
+    state.matches('toggledOff');
+    // state.hasTag('');
+    console.log(state.context);
+  })
+
+  constructor() {
+    this.service.start();
+  }
 }

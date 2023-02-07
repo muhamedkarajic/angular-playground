@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { interpret } from 'xstate';
-import { machine } from './machine';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'my-app',
@@ -8,13 +7,5 @@ import { machine } from './machine';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  service = interpret(machine).onTransition(state => {
-    state.matches('toggledOff');
-    // state.hasTag('');
-    console.log(state.context);
-  })
-
-  constructor() {
-    this.service.start();
-  }
+  input = new BehaviorSubject<string>('new input');
 }

@@ -1,96 +1,96 @@
-@import "/src/styles/variables.scss";
+@import "./../../styles/variables.scss";
 
-:host {
-    display: flex;
-    flex: 1;
-    width: 100%;
-    max-width: 1000px;
-    margin: 200px 0;
-}
+// :host {
+//     display: flex;
+//     flex: 1;
+//     width: 100%;
+//     max-width: 1000px;
+//     margin: 200px 0;
+// }
 
-$space: 2em;
-$border-radius: 20px;
-.overview {
-    width: 500px;
-    .overview-content {
-        background-color: rgb(255, 255, 255);
-        border-radius: 20px;
-        padding: 0px 20px;
-        margin-right: $space;
-        overflow: visible;
-        position: relative;
-        padding: 20px;
-        .title {
-            display: block;
-            img {
-                border-radius: $border-radius;
-                margin-bottom: 1.7em;
-                position: absolute;
-                top: 0%;
-                transform: translate3d(-50%, -50%, 0);
-                left: 50%;
-                width: 70%;
-            }
-            h1 {
-                padding-top: 100px;
-                font-weight: 600;
-                text-align: center;
-                font-size: 1.6em;
-                margin-bottom: 0.75em;
-            }
-            h2 {
-                text-align: center;
-                margin-bottom: 0.75em;
-            }
-        }
-        p {
-            line-height: 1.2;
-        }
-    }
-}
+// $space: 2em;
+// $border-radius: 20px;
+// .overview {
+//     width: 500px;
+//     .overview-content {
+//         background-color: rgb(255, 255, 255);
+//         border-radius: 20px;
+//         padding: 0px 20px;
+//         margin-right: $space;
+//         overflow: visible;
+//         position: relative;
+//         padding: 20px;
+//         .title {
+//             display: block;
+//             img {
+//                 border-radius: $border-radius;
+//                 margin-bottom: 1.7em;
+//                 position: absolute;
+//                 top: 0%;
+//                 transform: translate3d(-50%, -50%, 0);
+//                 left: 50%;
+//                 width: 70%;
+//             }
+//             h1 {
+//                 padding-top: 100px;
+//                 font-weight: 600;
+//                 text-align: center;
+//                 font-size: 1.6em;
+//                 margin-bottom: 0.75em;
+//             }
+//             h2 {
+//                 text-align: center;
+//                 margin-bottom: 0.75em;
+//             }
+//         }
+//         p {
+//             line-height: 1.2;
+//         }
+//     }
+// }
 
-.section {
-    width: 100%;
-    overflow: auto;
-    .menu {
-        height: 100px;
-        margin-bottom: $space;
-        display: flex;
-        flex: 1;
-        justify-content: right;
-        .menu-content {
-            display: inline-block;
-            height: 100%;
-            border-radius: $border-radius;
-            padding: 10px;
-            background-color: white;
-            span {
-                width: 50px;
-            }
-        }
-    }
-    .section-content {
-        border-radius: $border-radius;
-        padding: 0px 30px;
-        background-color: rgb(255, 255, 255);
-        padding-top: 40px;
-        padding-bottom: 40px;
+// .section {
+//     width: 100%;
+//     overflow: auto;
+//     .menu {
+//         height: 100px;
+//         margin-bottom: $space;
+//         display: flex;
+//         flex: 1;
+//         justify-content: right;
+//         .menu-content {
+//             display: inline-block;
+//             height: 100%;
+//             border-radius: $border-radius;
+//             padding: 10px;
+//             background-color: white;
+//             span {
+//                 width: 50px;
+//             }
+//         }
+//     }
+//     .section-content {
+//         border-radius: $border-radius;
+//         padding: 0px 30px;
+//         background-color: rgb(255, 255, 255);
+//         padding-top: 40px;
+//         padding-bottom: 40px;
 
-        section {
-            margin-bottom: 2em;
+//         section {
+//             margin-bottom: 2em;
 
-            &:last-child {
-                margin-bottom: 0;
-            }
-            h1 {
-                font-weight: 600;
-                font-size: 2em;
-                margin-bottom: 0.75em;
-            }
+//             &:last-child {
+//                 margin-bottom: 0;
+//             }
+//             h1 {
+//                 font-weight: 600;
+//                 font-size: 2em;
+//                 margin-bottom: 0.75em;
+//             }
 
-            p {
-                line-height: 1.2;
-            }
-        }
-    }
-}
+//             p {
+//                 line-height: 1.2;
+//             }
+//         }
+//     }
+// }

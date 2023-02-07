@@ -6,6 +6,7 @@
     "build": "ng build",
     "start": "node server.js",
     "watch": "ng build --watch --configuration development",
+    "watchQuick": "ng build --source-map=false --watch --configuration development",
     "buildAsProduction": "ng build --configuration production",
     "startAsProduction": "ng serve --configuration production",
     "buildAsProductionWithSourceMaps": "npm run build -- --configuration production --source-map=true",

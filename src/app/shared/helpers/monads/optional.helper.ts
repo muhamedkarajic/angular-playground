@@ -26,12 +26,11 @@ export class Person {
     ) { }
 }
 
-export function optionalExample() {
-
+export function example() {
     let person = new Person(
         'Muhamed',
-        // Option.none()
-        Optional.some<string>('Karajic')
+        Optional.none()
+        // Optional.some<string>('Karajic')
     );
 
     const greetings = person.lastName

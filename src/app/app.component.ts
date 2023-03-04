@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
-
+import { EntityClient } from './shared/models/entity/entity-client';
 
 @Component({
   selector: 'my-app',
@@ -11,12 +10,15 @@ import { BehaviorSubject } from 'rxjs';
 export class AppComponent implements OnInit {
   input = new BehaviorSubject<string>('new input');
 
-
   ngOnInit(): void {
+    const x = new EntityClient();
 
-
-
+    // ResultFactory.create({
+    //   tag: 'success',
+    //   value: 1
+    // } as Success<number>).pipe(
+    //   map$(validate),
+    //   map$(validate2),
+    // ).subscribe(console.log)
   }
-
-
 }

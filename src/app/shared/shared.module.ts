@@ -10,7 +10,6 @@ import { MyTypeofPipe } from './pipes/my-typeof.pipe';
 import { OptionalInputPipe } from './pipes/optional-data-input.pipe';
 import { RequiredInputPipe } from './pipes/required-data-input.pipe';
 import { TruncatePipe } from './pipes/truncate.pipe';
-
 @NgModule({
     declarations: [
         MyCastPipe,

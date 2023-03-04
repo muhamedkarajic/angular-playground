@@ -8,7 +8,7 @@ export class EntityClient {
 
     connection: signalR.HubConnection;
 
-    constructor(connectionString: string = "https://localhost:5000/ws") {
+    constructor(connectionString: string = "https://localhost:5001/ws") {
 
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(connectionString)

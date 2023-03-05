@@ -16,14 +16,15 @@ export class EntityClient {
         
         this.connection.start().then(() => {
             console.log('%cConnection established.', 'color: lightgreen');
-            this.connection.send("NewWindowLoaded", "test");
+            this.connection.send("ConnectX");
         });
-        this.connection.on("NewWindowLoaded", data => {
+        
+        this.connection.on("ConnectX", data => {
             console.log(data);
         });
 
-        this.connection.on("updateTotalViews", data => {
-            console.log(data);
+        this.connection.on("connectedUsers", id => {
+            console.log(id);
         });
     }
 

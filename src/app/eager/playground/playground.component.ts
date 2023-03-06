@@ -7,7 +7,7 @@ function log(txt: string) {
   (document.getElementById('log') as any).value += txt + '\n';
 }
 
-// const myKeys = Array.from(Array(1000).keys()).map(x => (x+1001))
+// const myKeys = Array.from(Array(1000).keys()).map(x => `${(x+1000)}`)
 // let time = performance.now();
 // const data = await this.window.db.raindrops.bulkGet(myKeys);
 // console.log(performance.now() - time, data);
@@ -51,7 +51,7 @@ export class PlaygroundComponent {
   async testPerformance() {
     for (var i = 1; i <= 10000; ++i) {
       this.drops.push({
-        id: i,
+        id: `${i}`,
         someData: {
           someText: 'some value',
           someNumber: Math.floor(Math.random() * 11),

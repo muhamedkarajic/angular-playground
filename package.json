@@ -27,6 +27,7 @@
     "@microsoft/signalr": "^7.0.3",
     "@ngneat/until-destroy": "^9.2.1",
     "concurrently": "^7.6.0",
+    "dexie": "^3.2.3",
     "express": "^4.18.1",
     "ngx-indexed-db": "^11.0.2",
     "rxjs": "^7.8.0",

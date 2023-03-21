@@ -83,3 +83,13 @@ export const validate4Async = async (input: boolean): Promise<Result<string, 'NO
     value: 'Hello World'
   }
 };
+
+export function example() {
+  ResultFactory.create({
+    tag: 'success',
+    value: 1
+  } as Success<number>).pipe(
+    map$(validate),
+    map$(validate2),
+  ).subscribe(console.log)
+}

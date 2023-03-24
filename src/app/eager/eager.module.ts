@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { EagerComponent } from './eager.component';
 import { EventLoopComponent } from './event-loop/event-loop.component';
-import { PlaygroundComponent } from './playground/playground.component';
+import { DynamicWorkerComponent } from './playground/worker.component';
 
 const routes: Routes = [
   {
@@ -20,12 +20,12 @@ const routes: Routes = [
   declarations: [
     EagerComponent,
     EventLoopComponent,
-    PlaygroundComponent
+    DynamicWorkerComponent,
   ],
   exports: [
     EagerComponent,
     EventLoopComponent,
-    PlaygroundComponent
+    DynamicWorkerComponent
   ]
 })
 export class EagerModule { }

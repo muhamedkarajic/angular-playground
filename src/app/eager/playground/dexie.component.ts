@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SimpleInputs } from 'src/app/shared/decorators/simple-inputs.decorator';
 
 import { Dexie } from 'dexie';
 
@@ -13,7 +12,7 @@ function log(txt: string) {
 // console.log(performance.now() - time, data);
 
 @Component({
-  selector: 'playground',
+  selector: 'dexie',
   template: `<a href="http://dexie.org/docs/API-Reference" target="_new">Dexie API Reference (new tab)</a>
 
   <h3>Log</h3>
@@ -24,8 +23,7 @@ function log(txt: string) {
   </p>`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-@SimpleInputs()
-export class PlaygroundComponent {
+export class DexieComponent {
   drops: any[] = [];
   db = new Dexie('raindrops');
 

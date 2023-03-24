@@ -1,14 +1,9 @@
 {
   "recommendations": [
-    "dbaeumer.vscode-eslint",
+    "angular.ng-template",
+    "nrwl.angular-console",
     "esbenp.prettier-vscode",
-    "hoovercj.vscode-settings-cycler",
-    "johnpapa.angular2",
-    "alefragnani.bookmarks",
-    "ms-dotnettools.csharp",
-    "pranaygp.vscode-css-peek",
-    "ms-azuretools.vscode-docker",
-    "ritwickdey.liveserver",
-    "jmrog.vscode-nuget-package-manager"
+    "firsttris.vscode-jest-runner",
+    "dbaeumer.vscode-eslint"
   ]
 }

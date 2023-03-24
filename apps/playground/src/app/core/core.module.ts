@@ -54,11 +54,11 @@ export function CreateObjectStore(
 
 @Injectable()
 export class MyNgxIndexedDBService extends NgxIndexedDBService implements NgxIndexedDBService {
-  _indexedDB: IDBFactory = this['indexedDB']!;
-  _dbConfig: DBConfig = this['dbConfig']!;
+  _indexedDB: IDBFactory = (this as any)['indexedDB']!;
+  _dbConfig: DBConfig = (this as any)['dbConfig']!;
 
   constructor() {
-    super(inject<DBConfig>(CONFIG_TOKEN), inject<unknown>(PLATFORM_ID));
+    super(inject<Record<string, DBConfig>>(CONFIG_TOKEN), inject<unknown>(PLATFORM_ID));
   }
 
   isStoreExisting(storeName: string): Observable<boolean> {

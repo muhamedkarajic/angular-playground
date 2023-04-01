@@ -9,9 +9,8 @@
     "startAsProduction": "ng serve --configuration production",
     "buildAsProductionWithSourceMaps": "npm run build -- --configuration production --source-map=true",
     "test": "ng test --browsers ChromeHeadless",
-    "web": "ng serve --hmr --port 4201",
     "updatePackagesMinor": "ncu -u -f /@venios.*/ --deep --target minor",
-    "serve": "concurrently \"npm run web\" \"npm run test\""
+    "serve": "nx run playground:serve --hmr --port 4201"
   },
   "dependencies": {
     "@angular/common": "^15.2.0",
